@@ -1,15 +1,15 @@
-import { useContext } from "react";
-import AuthContext from "./AuthContext";
-import type { AuthContextValue } from "./auth.context.types";
+import { useContext } from 'react'
+import AuthContext from './AuthContext'
+import type { AuthContextValue } from './auth.context.types'
 
 const useAuth = (): AuthContextValue => {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
 
   if (context === undefined) {
-    throw new Error("Error useAuth.ts");
+    throw new Error('useAuth context is undefined')
   }
 
-  return context;
-};
+  return context
+}
 
-export default useAuth;
+export default useAuth

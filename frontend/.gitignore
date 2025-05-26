@@ -10,14 +10,21 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+
 package.json
+google-oauth-credentials.json
+components.json
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+
 README.md
+
 vite.config.ts
 vite-env.d.ts
 eslint.config.js
 
 *.local
-*.json
 *.env
 
 # Editor directories and files

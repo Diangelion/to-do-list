@@ -1,15 +1,15 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 
-export type AuthState = {
-  user: string | "";
-  isLoggedIn: boolean;
-};
+export interface AuthState {
+  user: string
+  isAuthenticated: boolean
+}
 
-export type AuthContextValue = {
-  authState: AuthState;
-  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>;
-};
+export interface AuthContextValue {
+  authState: AuthState
+  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>
+}
 
-export type AuthProviderProps = {
-  children: ReactNode;
-};
+export interface AuthProviderProps {
+  children: ReactNode
+}

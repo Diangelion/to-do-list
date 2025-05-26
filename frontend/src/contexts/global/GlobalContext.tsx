@@ -1,32 +1,28 @@
-import React, { createContext, useEffect, useState } from "react";
-import type {
-  GlobalContextValue,
-  GlobalProviderProps,
-  GlobalState,
-} from "./global.context.types";
-import getEnv from "@/lib/env";
+import React, { useEffect, useState } from 'react'
+import { GlobalContext, initialContextValue } from './global.context'
+import getEnv from '@/lib/env.utils'
 
-const GlobalContext = createContext<GlobalContextValue | undefined>(undefined);
-
-const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
-  const [globalState, setGlobalState] = useState<GlobalState | object>({});
-  const value = {
-    globalState,
-    setGlobalState,
-  };
+const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [globalState, setGlobalState] = useState(
+    initialContextValue.globalState
+  )
 
   useEffect(() => {
     try {
-      getEnv();
+      const env = getEnv()
+      setGlobalState(prev => ({ ...prev, env }))
     } catch (error) {
-      console.error(error);
+      console.error(`GlobalProvider | ${error}`)
     }
-  }, []);
+  }, [])
 
   return (
-    <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>
-  );
-};
+    <GlobalContext.Provider value={{ globalState, setGlobalState }}>
+      {children}
+    </GlobalContext.Provider>
+  )
+}
 
-export default GlobalContext;
-export { GlobalProvider };
+export default GlobalProvider

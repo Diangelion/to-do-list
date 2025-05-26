@@ -1,14 +1,15 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
 
-export type GlobalState = {
-  env: ImportMetaEnv;
-};
+export interface GlobalState {
+  env: ImportMetaEnv
+  pageLoading: boolean
+}
 
-export type GlobalContextValue = {
-  globalState: GlobalState | object;
-  setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
-};
+export interface GlobalContextValue {
+  globalState: GlobalState
+  setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>
+}
 
-export type GlobalProviderProps = {
-  children: ReactNode;
-};
+export interface GlobalProviderProps {
+  children: ReactNode
+}
