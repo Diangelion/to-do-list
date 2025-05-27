@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useGoogleLogin } from '@react-oauth/google'
 import { TypeAnimation } from 'react-type-animation'
@@ -13,12 +14,11 @@ import LinkedinIcon from '../assets/icons8-linkedin.svg'
 
 const Login = () => {
   const { globalState } = useGlobal()
-  const { mutate } = useCreateUser()
+  const navigate = useNavigate()
 
   const login = useGoogleLogin({
-    onSuccess: ({ code }) => mutate({ token: code }),
-    onError: err => console.log(err),
-    onNonOAuthError: () => {},
+    onSuccess: ({ code }) => navigate(`oauth2/code/google?code=${code}`),
+    onError: err => console.log(`useGoogleLogin | ${err}`),
     flow: 'auth-code',
   })
 
@@ -33,7 +33,7 @@ const Login = () => {
   const useGithubLogin = () => {
     const githubClientId = globalState.env.VITE_GITHUB_CLIENT_ID
     const githubCallbackURL = globalState.env.VITE_GITHUB_CALLBACK_URL
-    const baseGithubOauth = 'https://github.com/login/oauth/authorize'
+    const baseGithubOauth = globalState.env.VITE_GITHUB_BASE_URL
     window.location.href = `${baseGithubOauth}?client_id=${githubClientId}&redirect_uri=${githubCallbackURL}`
   }
 

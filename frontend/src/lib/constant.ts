@@ -13,3 +13,19 @@ export const loginTypingSequence = [
   500,
   '',
 ]
+
+export const propagateLoaderColor = '#fff'
+export const propagateTypingSequence = [
+  'Authenticating',
+  1000,
+  'Authenticating.',
+  1000,
+  'Authenticating..',
+  1000,
+  'Authenticating...',
+  1000,
+  'Authenticating..',
+  1000,
+  'Authenticating.',
+  1000,
+]
