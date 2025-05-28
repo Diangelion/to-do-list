@@ -4,6 +4,8 @@ const getEnv = (): ImportMetaEnv => {
     if (!env.VITE_BASE_URL_API) throw new Error('Missing VITE_BASE_URL_API')
     if (!env.VITE_GOOGLE_CLIENT_ID)
       throw new Error('Missing VITE_GOOGLE_CLIENT_ID')
+    if (!env.VITE_GOOGLE_REDIRECT_URI)
+      throw new Error('Missing VITE_GOOGLE_REDIRECT_URI')
     if (!env.VITE_FACEBOOK_APP_ID)
       throw new Error('Missing VITE_FACEBOOK_APP_ID')
     if (!env.VITE_GITHUB_BASE_URL)

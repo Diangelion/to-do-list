@@ -6,18 +6,18 @@ from app.dependencies import db_dependencies
 
 router = APIRouter()
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = db_dependencies):
+@router.post('/', status_code=status.HTTP_201_CREATED)
+def create_user(user: UserCreate, db: Session = db_dependencies) -> JSONResponse:
   # Check if user already exist
   db_user = db.query(User).filter(User.email == user.email).first()
   if db_user:
     return JSONResponse(
-        status_code=status.HTTP_409_CONFLICT,
-        content={
-          "success": False,
-          "message": "Email already registered",
-          "data": None,
-        }
+      status_code=status.HTTP_409_CONFLICT,
+      content={
+        'success': False,
+        'message': 'Email already registered',
+        'data': None,
+      }
     )
 
   if user.profile_picture is None:
@@ -32,15 +32,15 @@ def create_user(user: UserCreate, db: Session = db_dependencies):
   return JSONResponse(
     status_code=status.HTTP_201_CREATED,
     content={
-      "success": True,
-      "message": "User created successfully",
-      "data": None
+      'success': True,
+      'message': 'User created successfully',
+      'data': None
     }
   )
 
-# @router.get("/{user_id}", response_model=UserResponse)
+# @router.get('/{user_id}', response_model=UserResponse)
 # def get_user(user_id: int, db: Session = db_dependencies):
 #   user = db.query(User).filter(User.id == user_id).first()
 #   if not user:
-#     raise HTTPException(status_code=404, detail="User not found")
+#     raise HTTPException(status_code=404, detail='User not found')
 #   return user

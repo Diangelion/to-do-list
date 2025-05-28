@@ -1,8 +1,6 @@
-import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useGoogleLogin } from '@react-oauth/google'
 import { TypeAnimation } from 'react-type-animation'
-import { useCreateUser } from '@/services/authService'
 import { loginTypingSequence } from '@/lib/constant'
 // import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import useGlobal from '@/contexts/global/useGlobal'
@@ -14,11 +12,11 @@ import LinkedinIcon from '../assets/icons8-linkedin.svg'
 
 const Login = () => {
   const { globalState } = useGlobal()
-  const navigate = useNavigate()
 
   const login = useGoogleLogin({
-    onSuccess: ({ code }) => navigate(`oauth2/code/google?code=${code}`),
     onError: err => console.log(`useGoogleLogin | ${err}`),
+    ux_mode: 'redirect',
+    redirect_uri: globalState.env.VITE_GOOGLE_REDIRECT_URI,
     flow: 'auth-code',
   })
 
