@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routers import users
+from backend.app.routers import user
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,8 +25,8 @@ def create_app() -> FastAPI:
       CORSMiddleware,
       allow_origins=settings.cors_origins,
       allow_credentials=True,
-      allow_methods=["*"],
-      allow_headers=["*"],
+      allow_methods=settings.cors_methods,
+      allow_headers=settings.cors_headers,
     )
 
   return app
@@ -34,7 +34,7 @@ def create_app() -> FastAPI:
 app = create_app()
 
 # Routers
-app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(user.router, prefix="/users", tags=["users"])
 
 if __name__ == "__main__":
   uvicorn.run(

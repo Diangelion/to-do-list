@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict, NoDecode
+from typing import List, Annotated
 
 class Settings(BaseSettings):
     database_url: str = Field(..., description='Database connection URL')
@@ -27,30 +28,23 @@ class Settings(BaseSettings):
     environment: str = Field(..., description='Environment (development/staging/production)')
     debug: bool = Field(..., description='Debug mode flag')
 
-    cors_origins: str = Field(..., description='CORS allowed origins (comma-separated)')
-    cors_methods: str = Field(..., description='CORS allowed methods (comma-separated)')
-    cors_headers: str = Field(..., description='CORS allowed headers (comma-separated)')
+    cors_origins: Annotated[List[str], NoDecode] = Field(..., description='CORS allowed origins (comma-separated)')
+    cors_methods: Annotated[List[str], NoDecode] = Field(..., description='CORS allowed methods (comma-separated)')
+    cors_headers: Annotated[List[str], NoDecode] = Field(..., description='CORS allowed headers (comma-separated)')
     log_level: str = Field(..., description='Logging level')
 
     model_config = SettingsConfigDict(
-        env_file='.env',
-        env_file_encoding='utf-8',
-        case_sensitive=False,  # Allow case-insensitive env vars
-        extra='ignore',  # Ignore extra env vars not defined in model
-        validate_assignment=True,  # Validate when values are assigned
+      env_file='.env',
+      env_file_encoding='utf-8',
+      case_sensitive=False,  # Allow case-insensitive env vars
+      extra='ignore',  # Ignore extra env vars not defined in model
+      validate_assignment=True,  # Validate when values are assigned
     )
 
-    @field_validator('cors_origins', mode='before')
-    def parse_cors_origins(cls, v: str) -> list[str]:
-      return [origin.strip() for origin in v.split(',') if origin.strip()]
-
-    @field_validator('cors_methods', mode='before')
-    def parse_cors_methods(cls, v: str) -> list[str]:
-      return [origin.strip() for origin in v.split(',') if origin.strip()]
-
-    @field_validator('cors_headers', mode='before')
-    def parse_cors_headers(cls, v: str) -> list[str]:
-      return [origin.strip() for origin in v.split(',') if origin.strip()]
+    @field_validator('cors_origins', 'cors_methods', 'cors_headers', mode='before')
+    @classmethod
+    def parse_cors(cls, v: str) -> List[str]:
+      return [origin.strip() for origin in v.split(',')]
 
     @field_validator('environment')
     def validate_environment(cls, v: str) -> str:
@@ -69,6 +63,6 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-  return Settings()
+  return Settings() # type: ignore
 
 settings: Settings = get_settings()
