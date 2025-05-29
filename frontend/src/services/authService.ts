@@ -4,9 +4,9 @@ import type {
   CreateUserResponse,
 } from '@/api/auth/auth.api.types'
 
-export const useCreateUser = (provider: string) => {
+export const useCreateUser = () => {
   return useFetchMutation<CreateUserResponse, CreateUserRequest>(
-    `/oauth/${provider}`,
+    `/users/login`,
     'users'
   )
 }

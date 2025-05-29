@@ -8,13 +8,14 @@ import { useCreateUser } from '@/services/authService'
 const OAuth2 = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { provider = '', error = '' } = useParams()
-  const { mutate } = useCreateUser(provider)
+  const { provider = '' } = useParams()
+  const { mutate } = useCreateUser()
 
   useEffect(() => {
+    const error: string = searchParams.get('error') || ''
     if (error) navigate('/')
     const code: string = searchParams.get('code') || ''
-    if (code) mutate({ token: code })
+    if (code) mutate({ token: code, provider })
   }, [])
 
   return (

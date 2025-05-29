@@ -1,5 +1,6 @@
 export interface CreateUserRequest {
   token: string
+  provider: string
 }
 
 export interface CreateUserResponse {
