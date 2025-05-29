@@ -1,8 +1,8 @@
 import httpx
 from fastapi import APIRouter, status
-from backend.app.schemas.oauth_schema import OAuth
-from backend.app.schemas.error_schema import AppError
-from backend.app.schemas.user_schema import UserCreate
+from app.schemas.oauth_schema import OAuth
+from app.schemas.error_schema import AppError
+from app.schemas.user_schema import UserCreate
 from app.config import settings
 
 router = APIRouter()
@@ -28,6 +28,7 @@ async def auth_google(token: str) -> UserCreate:
   try:
     async with httpx.AsyncClient() as client:
       token_response = await client.post(settings.google_token_uri, data=token_data)
+      print(f'Token Response: {token_response}, status_code: {token_response.status_code}')
 
       if token_response.status_code != status.HTTP_200_OK:
         error_detail = token_response.json().get('error_description', 'Unknown error')
@@ -47,7 +48,7 @@ async def auth_google(token: str) -> UserCreate:
       )
 
       if user_response.status_code != status.HTTP_200_OK:
-        error_detail = token_response.json().get('error_description', 'Unknown error')
+        error_detail = user_response.json().get('error_description', 'Unknown error')
         error_message = f'Google OAuth token exchange failed: {error_detail}'
 
       user_info = user_response.json()

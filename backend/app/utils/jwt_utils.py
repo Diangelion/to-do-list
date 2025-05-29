@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from jose import JWTError, jwt
 from fastapi import HTTPException
-from backend.app.schemas.jwt_schema import TokenData
+from app.schemas.jwt_schema import TokenData
 from app.config import settings
 
 def create_payload(user_id: str, expire: datetime, token_type: str) -> dict[str, Any]:

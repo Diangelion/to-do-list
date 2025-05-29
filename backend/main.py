@@ -2,8 +2,8 @@ import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.schemas.error_schema import AppError
-from backend.app.utils.response_utils import json_res
+from app.schemas.error_schema import AppError
+from app.utils.response_utils import json_res
 from app.config import settings
 from app.database import engine, Base
 from app.api import user_api
