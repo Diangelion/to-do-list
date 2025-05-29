@@ -2,41 +2,36 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.models.user import User, UserCreate
+from app.models.oauth import OAuth
+from app.models.error import AppError
+from app.utils.oauth import main_oauth
+from app.utils.response import json_res
 from app.dependencies import db_dependencies
 
 router = APIRouter()
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = db_dependencies) -> JSONResponse:
-  # Check if user already exist
-  db_user = db.query(User).filter(User.email == user.email).first()
-  if db_user:
-    return JSONResponse(
-      status_code=status.HTTP_409_CONFLICT,
-      content={
-        'success': False,
-        'message': 'Email already registered',
-        'data': None,
-      }
-    )
+@router.post('/', status_code=status.HTTP_200_OK)
+async def login(oauth: OAuth, db: Session = db_dependencies) -> JSONResponse:
+  try:
+    user: UserCreate = await main_oauth(oauth)
 
-  if user.profile_picture is None:
-    user.profile_picture = f'https://placehold.co/300?text=${user.name.strip()[0]}'
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user:
+      # Perform JWT
+      return json_res(400, True, 'HEHE')
 
-  # Insert into database
-  new_user = User(**user.model_dump())
-  db.add(new_user)
-  db.commit()
-  db.refresh(new_user)
+    if not user.profile_picture:
+      user.profile_picture = f'https://placehold.co/300?text=${user.name.strip()[0]}'
 
-  return JSONResponse(
-    status_code=status.HTTP_201_CREATED,
-    content={
-      'success': True,
-      'message': 'User created successfully',
-      'data': None
-    }
-  )
+    new_user = User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    # Perform JWT
+    return json_res(400, True, 'HEHE')
+  except Exception as e:
+    raise AppError(str(e), getattr(e, 'status_code', status.HTTP_500_INTERNAL_SERVER_ERROR))
 
 # @router.get('/{user_id}', response_model=UserResponse)
 # def get_user(user_id: int, db: Session = db_dependencies):

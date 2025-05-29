@@ -1,5 +1,5 @@
 from fastapi import UploadFile
-from sqlalchemy import Column, ForeignKey, String, DateTime, func
+from sqlalchemy import Column, ForeignKey, String, Boolean, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
@@ -12,7 +12,7 @@ class User(Base):
 
   id = Column(UUID(as_uuid=True), primary_key=True, index=True)
   name = Column(String(100), nullable=False)
-  email = Column(String(100), unique=True, nullable=False, index=True)
+  email = Column(String(100), unique=True, nullable=False)
   profile_picture = Column(String(255), nullable=False)
   created_at = Column(
     DateTime(timezone=True),
@@ -26,12 +26,12 @@ class User(Base):
     nullable=False
   )
 
-# class UserCredentials(Base):
-#   __tablename__ = 'user_credentials'
+class UserCredentials(Base):
+  __tablename__ = 'user_credentials'
 
-#   id = Column(UUID(as_uuid=True), primary_key=True, index=True)
-#   user_id = Column(String(100), nullable=False, index=True)
-
+  id = Column(UUID(as_uuid=True), primary_key=True, index=True)
+  user_id = Column(String(100), nullable=False, index=True)
+  refresh_token = Column(String(255), nullable=False)
 
 # Pydantic Schemas
 class UserCreate(BaseModel):

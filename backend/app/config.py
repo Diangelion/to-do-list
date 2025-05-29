@@ -13,9 +13,9 @@ class Settings(BaseSettings):
 
     google_client_id: str = Field(..., description='Google Client ID')
     google_client_secret: str = Field(..., description='Google Client Secret')
-    google_auth_uri: str = Field(..., description='Google Auth URIs')
     google_token_uri: str = Field(..., description='Google Token URI')
     google_redirect_uri: str = Field(..., description='Google Redirect URI')
+    google_user_info_uri: str = Field(..., description='Google User Info URI')
 
     api_host: str = Field(..., description='API host')
     api_port: int = Field(..., description='API port')
