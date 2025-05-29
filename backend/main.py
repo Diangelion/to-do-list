@@ -2,15 +2,15 @@ import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.models.error import AppError
-from app.utils.response import json_res
+from backend.app.schemas.error_schema import AppError
+from backend.app.utils.response_utils import json_res
 from app.config import settings
 from app.database import engine, Base
-from app.routers import user
+from app.api import user_api
 
 # Routers
 api_router = APIRouter(prefix=settings.api_prefix)
-api_router.include_router(user.router, prefix='/users', tags=['users'])
+api_router.include_router(user_api.router, prefix='/users', tags=['users'])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

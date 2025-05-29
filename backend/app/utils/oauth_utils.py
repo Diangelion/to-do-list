@@ -1,8 +1,8 @@
 import httpx
 from fastapi import APIRouter, status
-from app.models.oauth import OAuth
-from app.models.user import UserCreate
-from app.models.error import AppError
+from backend.app.schemas.oauth_schema import OAuth
+from backend.app.schemas.error_schema import AppError
+from backend.app.schemas.user_schema import UserCreate
 from app.config import settings
 
 router = APIRouter()
