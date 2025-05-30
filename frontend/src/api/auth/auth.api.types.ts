@@ -4,6 +4,5 @@ export interface CreateUserRequest {
 }
 
 export interface CreateUserResponse {
-  name: string
-  email: string
+  access_token: string
 }

@@ -1,21 +1,45 @@
-import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
+import { useEffect } from 'react'
 import { PropagateLoader } from 'react-spinners'
 import { TypeAnimation } from 'react-type-animation'
 import { useSearchParams, useParams, useNavigate } from 'react-router'
-import { useEffect } from 'react'
+import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
+import useGlobal from '@/contexts/global/useGlobal'
 import { useCreateUser } from '@/services/authService'
+import { storeWithExpiration } from '@/lib/localForage.utils'
 
 const OAuth2 = () => {
+  const { globalState } = useGlobal()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { provider = '' } = useParams()
-  const { mutate } = useCreateUser()
+  const { mutateAsync: createUserLogin } = useCreateUser()
 
   useEffect(() => {
-    const error: string = searchParams.get('error') || ''
-    if (error) navigate('/')
-    const code: string = searchParams.get('code') || ''
-    if (code) mutate({ token: code, provider })
+    const code = searchParams.get('code')
+    const handleLogin = async () => {
+      try {
+        if (code && provider) {
+          const loginResponse = await createUserLogin({ token: code, provider })
+          if (!(loginResponse.status === 200))
+            throw new Error(
+              `Login error with status code: ${loginResponse.status}`
+            )
+          await storeWithExpiration(
+            globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
+            loginResponse.data?.data?.access_token,
+            0,
+            0,
+            globalState.env.VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES
+          )
+          return navigate('/dashboard')
+        }
+        throw new Error('Login oauth error or not reachable.')
+      } catch (error) {
+        return navigate('/')
+      }
+    }
+
+    handleLogin()
   }, [])
 
   return (
@@ -29,7 +53,6 @@ const OAuth2 = () => {
       />
       <PropagateLoader
         color={propagateLoaderColor}
-        // loading={loading}
         aria-label="Loading Spinner"
         data-testid="loader"
       />

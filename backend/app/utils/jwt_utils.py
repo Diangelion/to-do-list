@@ -1,8 +1,8 @@
+from redis import Redis
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from jose import JWTError, jwt
 from app.schemas.jwt_schema import TokenData
-from app.dependencies import redis_client
 from app.settings import settings
 
 def create_payload(user_id: str, expire: datetime, token_type: str) -> dict[str, Any]:
@@ -34,7 +34,13 @@ def verify_token(token: str) -> TokenData:
     raise JWTError('Credentials error.')
   return TokenData(user_id=user_id, token_type=token_type)
 
-async def store_refresh_token(user_id: str, refresh_token: str, expire: timedelta):
+async def store_refresh_token(
+  user_id: str,
+  refresh_token: str,
+  expire: timedelta,
+  redis_client: Redis
+):
   expiry_in_seconds = int(expire.total_seconds())
   key = f'{settings.redis_json_key}{user_id}'
+  print(f'Expired: {expiry_in_seconds}, key: {key}')
   await redis_client.set(key, refresh_token, ex=expiry_in_seconds)

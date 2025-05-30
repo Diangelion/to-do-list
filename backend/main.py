@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 # Init router
 api_router = APIRouter(prefix=settings.api_prefix)
 
+# Routers
+api_router.include_router(user_api.router, prefix='/users', tags=['users'])
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
   # Initialize PostgreSQL connection
@@ -71,14 +74,14 @@ app = create_app()
 # Global exception
 @app.exception_handler(Exception)
 async def generic_exception_handler(_, exc: Exception):
-  logger.critical(f"Unhandled exception caught by generic_exception_handler: {type(exc).__name__} - {str(exc)}", exc_info=True)
+  logger.critical(
+    f"Unhandled exception caught by generic_exception_handler: {type(exc).__name__} - {str(exc)}",
+    exc_info=True
+  )
   error_message = "An unexpected internal server error occurred. Please try again later."
   if app.debug:
     error_message = f"Internal Server Error: {type(exc).__name__} - {str(exc)}"
   return json_res(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
-
-# Routers
-api_router.include_router(user_api.router, prefix='/users', tags=['users'])
 
 # Main
 if __name__ == '__main__':

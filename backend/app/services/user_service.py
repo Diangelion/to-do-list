@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from redis import Redis
 from app.models.user_model import User
 from app.schemas.user_schema import UserCreate
 from app.utils.jwt_utils import create_access_token, create_refresh_token, store_refresh_token
@@ -31,12 +32,13 @@ def get_or_create_user(oauth_user: UserCreate, db: Session) -> str:
 
   return str(user.id)
 
-async def authenticate_user(oauth_user: UserCreate, db: Session) -> dict[str, str]:
+async def authenticate_user(
+  oauth_user: UserCreate,
+  db: Session,
+  redis_client: Redis
+) -> dict[str, str]:
   user_id = get_or_create_user(oauth_user, db)
   access_token = create_access_token(user_id)
   refresh_token, lifetime = create_refresh_token(user_id)
-  await store_refresh_token(user_id, refresh_token, lifetime)
-  return {
-    'access_token': access_token,
-    'refresh_token': refresh_token
-  }
+  await store_refresh_token(user_id, refresh_token, lifetime, redis_client)
+  return { 'access_token': access_token }

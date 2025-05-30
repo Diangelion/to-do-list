@@ -11,14 +11,17 @@ export const initialContextValue: GlobalContextValue = {
       SSR: false,
       VITE_BASE_URL_API: '',
       VITE_GOOGLE_CLIENT_ID: '',
+      VITE_GOOGLE_REDIRECT_URI: '',
       VITE_GITHUB_BASE_URL: '',
       VITE_GITHUB_CLIENT_ID: '',
       VITE_GITHUB_CALLBACK_URL: '',
       VITE_FACEBOOK_APP_ID: '',
+      VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY: '',
+      VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES: 0,
     },
     pageLoading: false,
   },
-  setGlobalState: () => console.warn('Context not ready'),
+  setGlobalState: () => {},
 }
 
 export const GlobalContext =

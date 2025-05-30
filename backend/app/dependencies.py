@@ -1,4 +1,4 @@
-from fastapi import Depends, Request
+from fastapi import Request
 from sqlalchemy.orm import Session
 from typing import Generator
 from redis.asyncio import Redis
@@ -16,6 +16,3 @@ async def get_redis_client(request: Request) -> Redis:
   if redis_client is None:
     raise RuntimeError("Redis client not available in app.state")
   return redis_client
-
-db_dependencies: Session = Depends(get_db)
-redis_client: Redis = Depends(get_redis_client)
