@@ -22,7 +22,13 @@ class Settings(BaseSettings):
     api_port: int = Field(..., description='API port')
     api_prefix: str = Field(..., description='API prefix path')
 
-    # redis_url: str = Field(..., description='Redis connection URL')
+    redis_url: str = Field(..., description='Redis connection URL')
+    # redis_host: str = Field(..., description='Redis connection host')
+    # redis_port: int = Field(..., description='Redis connection port')
+    # redis_db: str = Field(..., description='Redis connection DB')
+    # redis_password: str = Field(..., description='Redis connection password')
+    redis_json_key: str = Field(..., description='Redis JSON key')
+
     # smtp_server: str = Field(..., description='SMTP server host')
     # smtp_port: int = Field(..., description='SMTP server port')
     # smtp_username: str = Field(..., description='SMTP username')
@@ -38,7 +44,9 @@ class Settings(BaseSettings):
     cors_origins: Annotated[list[str], NoDecode] = Field(..., description='CORS allowed origins (comma-separated)')
     cors_methods: Annotated[list[str], NoDecode] = Field(..., description='CORS allowed methods (comma-separated)')
     cors_headers: Annotated[list[str], NoDecode] = Field(..., description='CORS allowed headers (comma-separated)')
+
     log_level: str = Field(..., description='Logging level')
+    log_path: str = Field(..., description='Logging output file path')
 
     model_config = SettingsConfigDict(
       env_file='.env',
@@ -57,14 +65,14 @@ class Settings(BaseSettings):
     def validate_environment(cls, v: str) -> str:
       allowed_envs = {'development', 'staging', 'production'}
       if v.lower() not in allowed_envs:
-        raise ValueError(f'Environment must be one of: {allowed_envs}')
+        raise ValueError(f'Environment must be one of: {allowed_envs}.')
       return v.lower()
 
     @field_validator('log_level')
     def validate_log_level(cls, v: str) -> str:
       allowed_levels = {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
       if v.upper() not in allowed_levels:
-        raise ValueError(f'Log level must be one of: {allowed_levels}')
+        raise ValueError(f'Log level must be one of: {allowed_levels}.')
       return v.upper()
 
 

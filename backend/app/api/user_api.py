@@ -13,5 +13,5 @@ router = APIRouter()
 @router.post("/login", status_code=status.HTTP_200_OK)
 async def login(oauth: OAuth, db: Session = db_dependencies) -> JSONResponse:
   oauth_user: UserCreate = await main_oauth(oauth)
-  tokens: dict[str, str] = authenticate_user(oauth_user, db)
+  tokens: dict[str, str] = await authenticate_user(oauth_user, db)
   return json_res(status.HTTP_200_OK, True, 'Login success,', tokens)
