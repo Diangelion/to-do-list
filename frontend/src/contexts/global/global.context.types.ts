@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 
 export interface GlobalState {
-  env: ImportMetaEnv
-  pageLoading: boolean
+  env: Partial<ImportMetaEnv>
+  loading: boolean
 }
 
 export interface GlobalContextValue {

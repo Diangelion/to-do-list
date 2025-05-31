@@ -3,7 +3,7 @@ import useAuth from '@/contexts/auth/useAuth'
 
 const PublicRouter = () => {
   const { authState } = useAuth()
-  return authState.isAuthenticated ? (
+  return authState.authenticated ? (
     <Navigate to="/dashboard" replace />
   ) : (
     <Outlet />

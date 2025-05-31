@@ -12,14 +12,14 @@ const AppRouter = () => {
   const { authState } = useAuth()
 
   return (
-    <GoogleOAuthProvider clientId={globalState?.env?.VITE_GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={globalState.env.VITE_GOOGLE_CLIENT_ID || ''}>
       <Routes>
         {/* Root route */}
         <Route
           path="/"
           element={
             <Navigate
-              to={authState.isAuthenticated ? '/dashboard' : '/login'}
+              to={authState.authenticated ? '/dashboard' : '/login'}
               replace
             />
           }

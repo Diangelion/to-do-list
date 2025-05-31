@@ -1,6 +1,10 @@
 import { QueryClient } from '@tanstack/react-query'
 import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query'
-import type { ApiResponse, ApiError } from '@/api/client.types'
+import type {
+  ApiResponse,
+  BackendCustomResponse,
+  ApiError,
+} from '@/api/client.types'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,9 +28,11 @@ export const queryClient = new QueryClient({
 // Query options factory
 export const createQueryOptions = <T>(
   queryKey: unknown[],
-  queryFn: () => Promise<ApiResponse<T>>,
-  options?: Partial<UseQueryOptions<ApiResponse<T>, ApiError>>
-): UseQueryOptions<ApiResponse<T>, ApiError> => ({
+  queryFn: () => Promise<ApiResponse<BackendCustomResponse<T>>>,
+  options?: Partial<
+    UseQueryOptions<ApiResponse<BackendCustomResponse<T>>, ApiError>
+  >
+): UseQueryOptions<ApiResponse<BackendCustomResponse<T>>, ApiError> => ({
   queryKey,
   queryFn,
   ...options,
@@ -34,11 +40,21 @@ export const createQueryOptions = <T>(
 
 // Mutation options factory
 export const createMutationOptions = <TData, TVariables>(
-  mutationFn: (variables: TVariables) => Promise<ApiResponse<TData>>,
+  mutationFn: (
+    variables: TVariables
+  ) => Promise<ApiResponse<BackendCustomResponse<TData>>>,
   options?: Partial<
-    UseMutationOptions<ApiResponse<TData>, ApiError, TVariables>
+    UseMutationOptions<
+      ApiResponse<BackendCustomResponse<TData>>,
+      ApiError,
+      TVariables
+    >
   >
-): UseMutationOptions<ApiResponse<TData>, ApiError, TVariables> => ({
+): UseMutationOptions<
+  ApiResponse<BackendCustomResponse<TData>>,
+  ApiError,
+  TVariables
+> => ({
   mutationFn,
   ...options,
 })

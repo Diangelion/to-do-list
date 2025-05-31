@@ -1,13 +1,22 @@
 import type { ReactNode } from 'react'
 
+export interface User {
+  name: string
+  email: string
+  profile_picture: string
+}
+
 export interface AuthState {
-  user: string
-  isAuthenticated: boolean
+  user: Partial<User>
+  authenticated: boolean
 }
 
 export interface AuthContextValue {
   authState: AuthState
   setAuthState: React.Dispatch<React.SetStateAction<AuthState>>
+  login: (user: User) => void
+  logout: () => Promise<void>
+  refreshAuth: () => void
 }
 
 export interface AuthProviderProps {

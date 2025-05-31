@@ -5,7 +5,12 @@ import type {
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query'
-import type { ApiResponse, ApiError, FetchOptions } from '@/api/client.types'
+import type {
+  ApiResponse,
+  BackendCustomResponse,
+  ApiError,
+  FetchOptions,
+} from '@/api/client.types'
 import { get, post, put, del } from '@/api/client'
 import {
   createQueryOptions,
@@ -17,8 +22,11 @@ import { useCallback, useRef, useEffect } from 'react'
 export const useFetchQuery = <T>(
   endpoint: string,
   queryKey: unknown[] = [],
-  options?: Partial<UseQueryOptions<ApiResponse<T>, ApiError>>
-): UseQueryResult<ApiResponse<T>, ApiError> => {
+  fetchOptions?: FetchOptions,
+  queryOptions?: Partial<
+    UseQueryOptions<ApiResponse<BackendCustomResponse<T>>, ApiError>
+  >
+): UseQueryResult<ApiResponse<BackendCustomResponse<T>>, ApiError> => {
   const abortControllerRef = useRef<AbortController>(null)
 
   const queryFn = useCallback(async () => {
@@ -30,7 +38,10 @@ export const useFetchQuery = <T>(
     // Create new abort controller
     abortControllerRef.current = new AbortController()
 
-    return get<T>(endpoint, { signal: abortControllerRef.current.signal })
+    return get<T>(endpoint, {
+      ...fetchOptions,
+      signal: abortControllerRef.current.signal,
+    })
   }, [endpoint])
 
   // Cleanup on unmount
@@ -42,7 +53,9 @@ export const useFetchQuery = <T>(
     }
   }, [])
 
-  return useQuery(createQueryOptions([...queryKey, endpoint], queryFn, options))
+  return useQuery(
+    createQueryOptions([...queryKey, endpoint], queryFn, queryOptions)
+  )
 }
 
 // Custom hook for POST mutations
@@ -50,8 +63,16 @@ export const useFetchMutation = <TData, TVariables>(
   endpoint: string,
   invalidateQueryKey: string,
   fetchOptions?: FetchOptions,
-  mutationOptions?: UseMutationOptions<ApiResponse<TData>, ApiError, TVariables>
-): UseMutationResult<ApiResponse<TData>, ApiError, TVariables> => {
+  mutationOptions?: UseMutationOptions<
+    ApiResponse<BackendCustomResponse<TData>>,
+    ApiError,
+    TVariables
+  >
+): UseMutationResult<
+  ApiResponse<BackendCustomResponse<TData>>,
+  ApiError,
+  TVariables
+> => {
   const queryClient = useQueryClient()
 
   const mutationFn = useCallback(
@@ -68,43 +89,43 @@ export const useFetchMutation = <TData, TVariables>(
   )
 }
 
-// Custom hook for PUT mutations
-export const useFetchUpdateMutation = <TData, TVariables>(
-  endpoint: string,
-  invalidateQueryKey: string,
-  mutationOptions?: UseMutationOptions<ApiResponse<TData>, ApiError, TVariables>
-): UseMutationResult<ApiResponse<TData>, ApiError, TVariables> => {
-  const queryClient = useQueryClient()
+// // Custom hook for PUT mutations
+// export const useFetchUpdateMutation = <TData, TVariables>(
+//   endpoint: string,
+//   invalidateQueryKey: string,
+//   mutationOptions?: UseMutationOptions<ApiResponse<TData>, ApiError, TVariables>
+// ): UseMutationResult<ApiResponse<TData>, ApiError, TVariables> => {
+//   const queryClient = useQueryClient()
 
-  const mutationFn = useCallback(
-    (variables: TVariables) => put<TData>(endpoint, variables),
-    [endpoint]
-  )
+//   const mutationFn = useCallback(
+//     (variables: TVariables) => put<TData>(endpoint, variables),
+//     [endpoint]
+//   )
 
-  return useMutation(
-    createMutationOptions(mutationFn, {
-      onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-      ...mutationOptions,
-    })
-  )
-}
+//   return useMutation(
+//     createMutationOptions(mutationFn, {
+//       onSuccess: () =>
+//         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+//       ...mutationOptions,
+//     })
+//   )
+// }
 
-// Custom hook for DELETE mutations
-export const useFetchDeleteMutation = <T>(
-  endpoint: string,
-  invalidateQueryKey: string,
-  mutationOptions?: UseMutationOptions<ApiResponse<T>, ApiError>
-) => {
-  const queryClient = useQueryClient()
+// // Custom hook for DELETE mutations
+// export const useFetchDeleteMutation = <T>(
+//   endpoint: string,
+//   invalidateQueryKey: string,
+//   mutationOptions?: UseMutationOptions<ApiResponse<T>, ApiError>
+// ) => {
+//   const queryClient = useQueryClient()
 
-  const mutationFn = useCallback(() => del<T>(endpoint), [endpoint])
+//   const mutationFn = useCallback(() => del<T>(endpoint), [endpoint])
 
-  return useMutation(
-    createMutationOptions(mutationFn, {
-      onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-      ...mutationOptions,
-    })
-  )
-}
+//   return useMutation(
+//     createMutationOptions(mutationFn, {
+//       onSuccess: () =>
+//         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+//       ...mutationOptions,
+//     })
+//   )
+// }

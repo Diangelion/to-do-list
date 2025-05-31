@@ -1,17 +1,25 @@
-import type { ApiResponse, FetchOptions } from './client.types'
+import type {
+  ApiResponse,
+  BackendCustomResponse,
+  FetchOptions,
+} from './client.types'
 import {
   createTimeoutSignal,
   combineSignals,
   fetchWithRetry,
   handleFetchError,
 } from '@/lib/client.utils'
+import {
+  get as getLocalForage,
+  store as storeLocalForage,
+} from '@/lib/localForage.utils'
 
 const baseURL = import.meta.env.VITE_BASE_URL_API
 
 const apiRequest = async <T>(
   endpoint: string,
   options: FetchOptions = {}
-): Promise<ApiResponse<T>> => {
+): Promise<ApiResponse<BackendCustomResponse<T>>> => {
   const {
     timeout = 10000,
     retries = 3,
@@ -24,11 +32,15 @@ const apiRequest = async <T>(
   const url = `${baseURL}${endpoint}`
   const timeoutSignal = createTimeoutSignal(timeout)
   const combinedSignal = combineSignals(signal, timeoutSignal)
+  const accessToken = await getLocalForage(
+    import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
+  )
 
   const requestOptions: RequestInit = {
     ...fetchOptions,
     headers: {
       'Content-Type': 'application/json',
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
     },
     signal: combinedSignal,
@@ -41,6 +53,16 @@ const apiRequest = async <T>(
       retries,
       retryDelay
     )
+
+    const newAccessToken =
+      response.headers.get('X-New-Access-Token') ||
+      response.headers.get('x-new-access-token')
+    if (newAccessToken) {
+      await storeLocalForage(
+        import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
+        newAccessToken
+      )
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
@@ -62,14 +84,14 @@ const apiRequest = async <T>(
 export const get = <T>(
   endpoint: string,
   options?: FetchOptions
-): Promise<ApiResponse<T>> =>
+): Promise<ApiResponse<BackendCustomResponse<T>>> =>
   apiRequest<T>(endpoint, { ...options, method: 'GET' })
 
 export const post = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
-): Promise<ApiResponse<T>> =>
+): Promise<ApiResponse<BackendCustomResponse<T>>> =>
   apiRequest<T>(endpoint, {
     ...options,
     method: 'POST',
@@ -80,7 +102,7 @@ export const put = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
-): Promise<ApiResponse<T>> =>
+): Promise<ApiResponse<BackendCustomResponse<T>>> =>
   apiRequest<T>(endpoint, {
     ...options,
     method: 'PUT',
@@ -90,5 +112,5 @@ export const put = <T>(
 export const del = <T>(
   endpoint: string,
   options?: FetchOptions
-): Promise<ApiResponse<T>> =>
+): Promise<ApiResponse<BackendCustomResponse<T>>> =>
   apiRequest<T>(endpoint, { ...options, method: 'DELETE' })

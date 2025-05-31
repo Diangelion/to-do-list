@@ -12,34 +12,37 @@ const OAuth2 = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { provider = '' } = useParams()
-  const { mutateAsync: createUserLogin } = useCreateUser()
+
+  const code = searchParams.get('code')
+  const tokenKey = globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
+  const expirationTime =
+    globalState.env.VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES
+
+  const { mutate: createUserLogin } = useCreateUser(undefined, {
+    onSuccess: async loginResponse => {
+      if (loginResponse.status === 200) {
+        await storeWithExpiration(
+          tokenKey!,
+          loginResponse.data?.data?.access_token,
+          0,
+          0,
+          expirationTime!
+        )
+        navigate('/dashboard')
+      }
+    },
+    onError: () => {
+      navigate('/')
+    },
+  })
 
   useEffect(() => {
-    const code = searchParams.get('code')
-    const handleLogin = async () => {
-      try {
-        if (code && provider) {
-          const loginResponse = await createUserLogin({ token: code, provider })
-          if (!(loginResponse.status === 200))
-            throw new Error(
-              `Login error with status code: ${loginResponse.status}`
-            )
-          await storeWithExpiration(
-            globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
-            loginResponse.data?.data?.access_token,
-            0,
-            0,
-            globalState.env.VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES
-          )
-          return navigate('/dashboard')
-        }
-        throw new Error('Login oauth error or not reachable.')
-      } catch (error) {
-        return navigate('/')
-      }
+    if (!code || !tokenKey || !expirationTime || !provider) {
+      navigate('/')
+      return
     }
 
-    handleLogin()
+    createUserLogin({ token: code, provider })
   }, [])
 
   return (
