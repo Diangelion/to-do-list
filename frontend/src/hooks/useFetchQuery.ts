@@ -61,7 +61,7 @@ export const useFetchQuery = <T>(
 // Custom hook for POST mutations
 export const useFetchMutation = <TData, TVariables>(
   endpoint: string,
-  invalidateQueryKey: string,
+  invalidateQueryKey: string | null,
   fetchOptions?: FetchOptions,
   mutationOptions?: UseMutationOptions<
     ApiResponse<BackendCustomResponse<TData>>,
@@ -83,7 +83,9 @@ export const useFetchMutation = <TData, TVariables>(
   return useMutation(
     createMutationOptions(mutationFn, {
       onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+        invalidateQueryKey
+          ? queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] })
+          : null,
       ...mutationOptions,
     })
   )

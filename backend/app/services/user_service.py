@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from redis import Redis
 from app.models.user_model import User
 from app.schemas.user_schema import UserCreate
-from app.utils.jwt_utils import create_access_token, create_refresh_token, store_refresh_token
+from app.utils.jwt_utils import create_access_token, create_refresh_token
+from app.utils.redis_utils import store_refresh_token
 
 def get_or_create_user(oauth_user: UserCreate, db: Session) -> str:
   user = db.query(User).filter(User.email == oauth_user.email).first()
@@ -42,3 +43,18 @@ async def authenticate_user(
   refresh_token, lifetime = create_refresh_token(user_id)
   await store_refresh_token(user_id, refresh_token, lifetime, redis_client)
   return { 'access_token': access_token }
+
+async def get_profile(
+  user_id: str,
+  db: Session,
+  redis_client: Redis
+) -> UserCreate | None:
+  user = db.query(User).filter(User.id == user_id).first()
+  if not user:
+    return None
+
+  return UserCreate(
+    name=str(user.name),
+    email=str(user.email),
+    profile_picture=str(user.profile_picture)
+  )

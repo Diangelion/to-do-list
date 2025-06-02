@@ -1,10 +1,12 @@
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, APIRouter, status
+from typing import Callable, Awaitable
+from fastapi import FastAPI, APIRouter, status, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from redis.asyncio import Redis
+from redis import Redis
 from app.utils.response_utils import json_res
+from app.middleware.jwt_middleware import jwt_middleware
 from app.database import engine, Base
 from app.api import user_api
 from app.settings import settings
@@ -36,7 +38,7 @@ async def lifespan(app: FastAPI):
   app.state.redis = Redis.from_url(settings.redis_url, decode_responses=True) # type:ignore
 
   try:
-    pong = await app.state.redis.ping()  # type:ignore
+    pong = app.state.redis.ping()  # type:ignore
     if pong != True:
       raise ConnectionError('Redis ping failed')
     print('Redis connected')
@@ -45,7 +47,7 @@ async def lifespan(app: FastAPI):
     raise
 
   yield
-  await app.state.redis.close()
+  app.state.redis.close()
   print('Redis disconnected')
 
 def create_app() -> FastAPI:
@@ -70,6 +72,10 @@ def create_app() -> FastAPI:
   return app
 
 app = create_app()
+
+@app.middleware('http')
+async def jwt(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
+  return await jwt_middleware(request, call_next)
 
 # Global exception
 @app.exception_handler(Exception)

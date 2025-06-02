@@ -19,7 +19,7 @@ export const useVerifyUser = (
   >
 ) => {
   return useFetchQuery<User>(
-    '/users/verify',
+    '/users/profile',
     ['users'],
     fetchOptions,
     queryOptions
@@ -36,7 +36,23 @@ export const useCreateUser = (
 ) => {
   return useFetchMutation<CreateUserResponse, CreateUserRequest>(
     `/users/login`,
-    'users',
+    null,
+    fetchOptions,
+    mutationOptions
+  )
+}
+
+export const useLogoutUser = (
+  fetchOptions?: FetchOptions,
+  mutationOptions?: UseMutationOptions<
+    ApiResponse<BackendCustomResponse<null>>,
+    ApiError,
+    null
+  >
+) => {
+  return useFetchMutation<null, null>(
+    '/users/logout',
+    null,
     fetchOptions,
     mutationOptions
   )

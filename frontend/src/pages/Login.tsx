@@ -18,6 +18,7 @@ const Login = () => {
     ux_mode: 'redirect',
     redirect_uri: globalState.env.VITE_GOOGLE_REDIRECT_URI,
     flow: 'auth-code',
+    select_account: true,
   })
 
   // const handleFacebookCallback = (response: unknown) => {

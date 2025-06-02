@@ -14,7 +14,6 @@ export interface AuthState {
 export interface AuthContextValue {
   authState: AuthState
   setAuthState: React.Dispatch<React.SetStateAction<AuthState>>
-  login: (user: User) => void
   logout: () => Promise<void>
   refreshAuth: () => void
 }

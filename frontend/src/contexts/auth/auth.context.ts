@@ -7,6 +7,8 @@ export const initialContextValue: AuthContextValue = {
     authenticated: false,
   },
   setAuthState: () => {},
+  logout: async () => {},
+  refreshAuth: () => {},
 }
 
 export const AuthContext = createContext<AuthContextValue>(initialContextValue)

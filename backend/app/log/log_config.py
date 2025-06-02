@@ -1,4 +1,5 @@
 import logging.config
+import datetime
 from typing import Any
 from app.settings import settings
 
@@ -26,7 +27,8 @@ LOGGING_CONFIG: dict[str, Any] = {
     "rotating_file_handler": {
       "class": "logging.handlers.RotatingFileHandler",
       "formatter": "file_formatter",
-      "filename": settings.log_path,
+      "filename": f"{settings.log_path}/app_{datetime.datetime.now().strftime('%Y-%m-%d')}.log",  # Log file path
+      "encoding": "utf-8",  # Ensure UTF-8 encoding for log files
       "maxBytes": 10 * 1024 * 1024,  # 10 MB before rotating
       "backupCount": 3,  # Keep 3 backup log files
       "level": "DEBUG",  # Log DEBUG and above to file

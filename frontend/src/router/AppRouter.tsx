@@ -6,6 +6,7 @@ import PublicRouter from './PublicRouter'
 import ProtectedRouter from './ProtectedRouter'
 import Login from '@/pages/Login'
 import OAuth2 from '@/pages/OAuth2'
+import Home from '@/pages/Home'
 
 const AppRouter = () => {
   const { globalState } = useGlobal()
@@ -33,7 +34,7 @@ const AppRouter = () => {
 
         {/* Protected routes */}
         <Route element={<ProtectedRouter />}>
-          {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+          <Route path="/home" element={<Home />} />
           {/* <Route path="/profile" element={<ProfilePage />} /> */}
         </Route>
 

@@ -39,6 +39,7 @@ const apiRequest = async <T>(
   const requestOptions: RequestInit = {
     ...fetchOptions,
     headers: {
+      Accept: 'application/json',
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
