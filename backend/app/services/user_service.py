@@ -33,7 +33,7 @@ def get_or_create_user(oauth_user: UserCreate, db: Session) -> str:
 
   return str(user.id)
 
-async def authenticate_user(
+def authenticate_user(
   oauth_user: UserCreate,
   db: Session,
   redis_client: Redis
@@ -41,15 +41,15 @@ async def authenticate_user(
   user_id = get_or_create_user(oauth_user, db)
   access_token = create_access_token(user_id)
   refresh_token, lifetime = create_refresh_token(user_id)
-  await store_refresh_token(user_id, refresh_token, lifetime, redis_client)
+  store_refresh_token(user_id, refresh_token, lifetime, redis_client)
   return { 'access_token': access_token }
 
-async def get_profile(
+def get_profile(
   user_id: str,
-  db: Session,
-  redis_client: Redis
+  db: Session
 ) -> UserCreate | None:
   user = db.query(User).filter(User.id == user_id).first()
+
   if not user:
     return None
 

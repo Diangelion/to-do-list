@@ -19,30 +19,6 @@ export const combineSignals = (
   return controller.signal
 }
 
-export const fetchWithRetry = async (
-  url: string,
-  options: RequestInit,
-  retries: number,
-  delay: number
-): Promise<Response> => {
-  try {
-    const response = await fetch(url, options)
-
-    // if (response.status >= 500 && retries > 0) {
-    //   await new Promise(resolve => setTimeout(resolve, delay))
-    //   return fetchWithRetry(url, options, retries - 1, delay * 1.5)
-    // }
-
-    return response
-  } catch (error) {
-    // if (retries > 0 && !options.signal?.aborted) {
-    //   await new Promise(resolve => setTimeout(resolve, delay))
-    //   return fetchWithRetry(url, options, retries - 1, delay * 1.5)
-    // }
-    // throw error
-  }
-}
-
 export const handleFetchError = (error: unknown): ApiError => {
   if (error instanceof Error) {
     if (error.name === 'AbortError') {

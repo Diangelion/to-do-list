@@ -21,19 +21,20 @@ async def login(
   request_data = await request.json()
   oauth = OAuth(**request_data)
   oauth_user: UserCreate = await main_oauth(oauth)
-  login_data: dict[str, str] = await authenticate_user(oauth_user, db, redis_client)
+  login_data: dict[str, str] = authenticate_user(oauth_user, db, redis_client)
   return json_res(status.HTTP_200_OK, True, 'Login success,', login_data)
 
 @router.get('/profile', response_model=UserCreate, status_code=status.HTTP_200_OK)
-async def profile(
+def profile(
   request: Request,
   db: Session = Depends(get_db),
   redis_client: Redis = Depends(get_redis_client)
 ) -> JSONResponse:
   user_id = request.state.user.user_id
-  user = await get_profile(user_id, db, redis_client)
+  user = get_profile(user_id, db)
   if not user:
     return json_res(status.HTTP_401_UNAUTHORIZED, False, 'Unauthorized')
+  print(f'User profile: {user}')
   return json_res(status.HTTP_200_OK, True, 'User verified', user)
 
 @router.post('/logout', status_code=status.HTTP_200_OK)
@@ -42,5 +43,5 @@ async def logout(
   redis_client: Redis = Depends(get_redis_client)
 ) -> JSONResponse:
   user_id = request.state.user.user_id
-  await delete_refresh_token(user_id, redis_client)
+  delete_refresh_token(user_id, redis_client)
   return json_res(status.HTTP_200_OK, True, 'Logout success')

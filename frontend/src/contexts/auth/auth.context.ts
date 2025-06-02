@@ -3,12 +3,12 @@ import type { AuthContextValue } from './auth.context.types'
 
 export const initialContextValue: AuthContextValue = {
   authState: {
-    user: {},
+    user: null,
     authenticated: false,
   },
   setAuthState: () => {},
+  isVerifying: false,
   logout: async () => {},
-  refreshAuth: () => {},
 }
 
 export const AuthContext = createContext<AuthContextValue>(initialContextValue)

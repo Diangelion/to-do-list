@@ -66,20 +66,20 @@ def create_app() -> FastAPI:
       allow_credentials=True,
       allow_methods=settings.cors_methods,
       allow_headers=settings.cors_headers,
+      expose_headers=["Authorization"],
     )
+
+    @app.middleware("http")
+    async def _(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
+      return await jwt_middleware(request, call_next)
 
   app.include_router(api_router)
   return app
 
 app = create_app()
 
-@app.middleware('http')
-async def jwt(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
-  return await jwt_middleware(request, call_next)
-
-# Global exception
 @app.exception_handler(Exception)
-async def generic_exception_handler(_, exc: Exception):
+async def generic_exception_handler(request: Request, exc: Exception):
   logger.critical(
     f"Unhandled exception caught by generic_exception_handler: {type(exc).__name__} - {str(exc)}",
     exc_info=True
@@ -89,8 +89,20 @@ async def generic_exception_handler(_, exc: Exception):
     error_message = f"Internal Server Error: {type(exc).__name__} - {str(exc)}"
   return json_res(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
 
+def debug_cors_settings():
+    """Debug function to print CORS settings"""
+    print("=== CORS Settings Debug ===")
+    print(f"CORS Origins: {settings.cors_origins}")
+    print(f"CORS Methods: {settings.cors_methods}")
+    print(f"CORS Headers: {settings.cors_headers}")
+    print(f"API Host: {settings.api_host}")
+    print(f"API Port: {settings.api_port}")
+    print(f"API Prefix: {settings.api_prefix}")
+    print("========================")
+
 # Main
 if __name__ == '__main__':
+  debug_cors_settings()  # Add this line
   uvicorn.run(
     'main:app',
     host=settings.api_host,

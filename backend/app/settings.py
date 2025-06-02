@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     api_host: str = Field(..., description='API host')
     api_port: int = Field(..., description='API port')
     api_prefix: str = Field(..., description='API prefix path')
+    api_public_url: Annotated[list[str], NoDecode] = Field(..., description='API public endpoint path')
 
     redis_url: str = Field(..., description='Redis connection URL')
     # redis_host: str = Field(..., description='Redis connection host')
@@ -61,7 +62,13 @@ class Settings(BaseSettings):
     def parse_cors(cls, v: str) -> list[str]:
       return [origin.strip() for origin in v.split(',')]
 
+    @field_validator('api_public_url', mode='before')
+    @classmethod
+    def parse_api_public(cls, v: str) -> list[str]:
+      return [path.strip() for path in v.split(',')]
+
     @field_validator('environment')
+    @classmethod
     def validate_environment(cls, v: str) -> str:
       allowed_envs = {'development', 'staging', 'production'}
       if v.lower() not in allowed_envs:
@@ -69,6 +76,7 @@ class Settings(BaseSettings):
       return v.lower()
 
     @field_validator('log_level')
+    @classmethod
     def validate_log_level(cls, v: str) -> str:
       allowed_levels = {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
       if v.upper() not in allowed_levels:

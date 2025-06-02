@@ -6,7 +6,6 @@ import type {
 import {
   createTimeoutSignal,
   combineSignals,
-  fetchWithRetry,
   handleFetchError,
 } from '@/lib/client.utils'
 import {
@@ -20,14 +19,7 @@ const apiRequest = async <T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<ApiResponse<BackendCustomResponse<T>>> => {
-  const {
-    timeout = 10000,
-    retries = 3,
-    retryDelay = 1000,
-    headers = {},
-    signal,
-    ...fetchOptions
-  } = options
+  const { timeout = 10000, headers = {}, signal, ...fetchOptions } = options
 
   const url = `${baseURL}${endpoint}`
   const timeoutSignal = createTimeoutSignal(timeout)
@@ -48,16 +40,12 @@ const apiRequest = async <T>(
   }
 
   try {
-    const response = await fetchWithRetry(
-      url,
-      requestOptions,
-      retries,
-      retryDelay
-    )
+    const response = await fetch(url, requestOptions)
 
     const newAccessToken =
       response.headers.get('X-New-Access-Token') ||
       response.headers.get('x-new-access-token')
+
     if (newAccessToken) {
       await storeLocalForage(
         import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,

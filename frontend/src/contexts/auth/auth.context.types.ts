@@ -7,15 +7,15 @@ export interface User {
 }
 
 export interface AuthState {
-  user: Partial<User>
+  user: Partial<User> | null
   authenticated: boolean
 }
 
 export interface AuthContextValue {
   authState: AuthState
   setAuthState: React.Dispatch<React.SetStateAction<AuthState>>
+  isVerifying: boolean
   logout: () => Promise<void>
-  refreshAuth: () => void
 }
 
 export interface AuthProviderProps {

@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type {
   UseQueryOptions,
@@ -16,7 +17,6 @@ import {
   createQueryOptions,
   createMutationOptions,
 } from '@/lib/queryClient.utils'
-import { useCallback, useRef, useEffect } from 'react'
 
 // Custom hook for GET requests
 export const useFetchQuery = <T>(
@@ -27,31 +27,11 @@ export const useFetchQuery = <T>(
     UseQueryOptions<ApiResponse<BackendCustomResponse<T>>, ApiError>
   >
 ): UseQueryResult<ApiResponse<BackendCustomResponse<T>>, ApiError> => {
-  const abortControllerRef = useRef<AbortController>(null)
-
-  const queryFn = useCallback(async () => {
-    // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
-
-    // Create new abort controller
-    abortControllerRef.current = new AbortController()
-
-    return get<T>(endpoint, {
-      ...fetchOptions,
-      signal: abortControllerRef.current.signal,
-    })
-  }, [endpoint])
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
-    }
-  }, [])
+  const queryFn = useCallback(
+    ({ signal }: { signal: AbortSignal }) =>
+      get<T>(endpoint, { signal, ...fetchOptions }),
+    [endpoint]
+  )
 
   return useQuery(
     createQueryOptions([...queryKey, endpoint], queryFn, queryOptions)
@@ -91,43 +71,54 @@ export const useFetchMutation = <TData, TVariables>(
   )
 }
 
-// // Custom hook for PUT mutations
-// export const useFetchUpdateMutation = <TData, TVariables>(
-//   endpoint: string,
-//   invalidateQueryKey: string,
-//   mutationOptions?: UseMutationOptions<ApiResponse<TData>, ApiError, TVariables>
-// ): UseMutationResult<ApiResponse<TData>, ApiError, TVariables> => {
-//   const queryClient = useQueryClient()
+// Custom hook for PUT mutations
+export const useFetchUpdateMutation = <TData, TVariables>(
+  endpoint: string,
+  invalidateQueryKey: string,
+  mutationOptions?: UseMutationOptions<
+    ApiResponse<BackendCustomResponse<TData>>,
+    ApiError,
+    TVariables
+  >
+): UseMutationResult<
+  ApiResponse<BackendCustomResponse<TData>>,
+  ApiError,
+  TVariables
+> => {
+  const queryClient = useQueryClient()
 
-//   const mutationFn = useCallback(
-//     (variables: TVariables) => put<TData>(endpoint, variables),
-//     [endpoint]
-//   )
+  const mutationFn = useCallback(
+    (variables: TVariables) => put<TData>(endpoint, variables),
+    [endpoint]
+  )
 
-//   return useMutation(
-//     createMutationOptions(mutationFn, {
-//       onSuccess: () =>
-//         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-//       ...mutationOptions,
-//     })
-//   )
-// }
+  return useMutation(
+    createMutationOptions(mutationFn, {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+      ...mutationOptions,
+    })
+  )
+}
 
-// // Custom hook for DELETE mutations
-// export const useFetchDeleteMutation = <T>(
-//   endpoint: string,
-//   invalidateQueryKey: string,
-//   mutationOptions?: UseMutationOptions<ApiResponse<T>, ApiError>
-// ) => {
-//   const queryClient = useQueryClient()
+// Custom hook for DELETE mutations
+export const useFetchDeleteMutation = <T>(
+  endpoint: string,
+  invalidateQueryKey: string,
+  mutationOptions?: UseMutationOptions<
+    ApiResponse<BackendCustomResponse<T>>,
+    ApiError
+  >
+) => {
+  const queryClient = useQueryClient()
 
-//   const mutationFn = useCallback(() => del<T>(endpoint), [endpoint])
+  const mutationFn = useCallback(() => del<T>(endpoint), [endpoint])
 
-//   return useMutation(
-//     createMutationOptions(mutationFn, {
-//       onSuccess: () =>
-//         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-//       ...mutationOptions,
-//     })
-//   )
-// }
+  return useMutation(
+    createMutationOptions(mutationFn, {
+      onSuccess: () =>
+        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+      ...mutationOptions,
+    })
+  )
+}

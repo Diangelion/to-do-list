@@ -1,13 +1,12 @@
 import { Navigate, Outlet } from 'react-router'
 import useAuth from '@/contexts/auth/useAuth'
+import Loading from '@/pages/Loading'
 
-const PublicRouter = () => {
-  const { authState } = useAuth()
-  return authState.authenticated ? (
-    <Navigate to="/dashboard" replace />
-  ) : (
-    <Outlet />
-  )
+const PublicRouter = ({ redirectPath = '/home' }) => {
+  const { authState, isVerifying } = useAuth()
+  if (isVerifying) return <Loading />
+  if (authState.authenticated) return <Navigate to={redirectPath} replace />
+  return <Outlet />
 }
 
 export default PublicRouter

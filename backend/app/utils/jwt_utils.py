@@ -35,7 +35,7 @@ def verify_token(
     options=options
   )
   user_id = payload.get('sub')
-  token_type = payload.get('token_type')
+  token_type = payload.get('type')
 
   if user_id is None or token_type is None:
     raise JWTError("Invalid token payload.")

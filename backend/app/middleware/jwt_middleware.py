@@ -7,16 +7,15 @@ from app.utils.jwt_utils import verify_token, create_access_token
 from app.utils.redis_utils import get_refresh_token, delete_refresh_token
 from app.utils.response_utils import json_res
 from app.dependencies import get_redis_client
+from app.settings import settings
 
 async def jwt_middleware(
   request: Request,
   call_next: Callable[[Request], Awaitable[Response]],
   redis_client: Redis = Depends(get_redis_client)
 ) -> Response:
-  if request.method == "OPTIONS":
-    return await call_next(request)
-
-  if request.url.path in ["/login"]:
+  public_endpoints = [f"{settings.api_prefix}{path}" for path in settings.api_public_url]
+  if request.method == "OPTIONS" or request.url.path in public_endpoints:
     return await call_next(request)
 
   auth_header = request.headers.get("Authorization", "")
@@ -38,7 +37,7 @@ async def jwt_middleware(
     user_id = verify_token(access_token, options={"verify_exp": False}).user_id
 
     try:
-      refresh_token = await get_refresh_token(user_id, redis_client)
+      refresh_token = get_refresh_token(user_id, redis_client)
       if not refresh_token:
         return json_res(status.HTTP_401_UNAUTHORIZED, False, "Session expired. Please login again.")
 
@@ -57,7 +56,7 @@ async def jwt_middleware(
       return response
 
     except JWTError as e:
-      await delete_refresh_token(user_id=user_id, redis_client=redis_client)
+      delete_refresh_token(user_id=user_id, redis_client=redis_client)
       return json_res(status.HTTP_401_UNAUTHORIZED, False, "Session expired. Please login again.")
 
   except JWTError as e:

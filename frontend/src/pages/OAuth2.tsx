@@ -28,7 +28,7 @@ const OAuth2 = () => {
           0,
           expirationTime!
         )
-        navigate('/dashboard')
+        navigate('/home')
       }
     },
     onError: () => {
