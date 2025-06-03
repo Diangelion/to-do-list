@@ -1,5 +1,22 @@
+# Build output
+build/
 dist/
+out/
+
+# Dependencies
 node_modules/
+
+# Coverage reports
 coverage/
-.env*
-*.md
+
+# Environment files
+.env
+*.local
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Specific generated files
+*.generated.ts

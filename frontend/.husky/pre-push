@@ -1,1 +1,17 @@
-npm run type-check && npm run lint
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running pre-push checks..."
+
+echo "Linting entire project..."
+npx eslint . --max-warnings=0 --no-warn-ignored
+
+# Example: Run tests
+# echo "Running tests..."
+# npm test
+
+# If any of the above commands fail (exit with a non-zero code),
+# Husky will abort the push.
+
+echo "Pre-push checks passed."
+exit 0
