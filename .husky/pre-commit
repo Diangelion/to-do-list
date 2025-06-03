@@ -1,0 +1,15 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Frontend pre-commit hook triggered."
+
+# Run lint-staged to lint only staged files
+echo "Linting staged files..."
+npm run lint-staged || {
+  # If lint-staged fails (exit with a non-zero code),
+  # Husky will abort the commit.
+  echo "❌ Linting errors found. Aborting commit.";
+  exit 1;
+}
+
+echo "✅ All checks passed. Committing now..."

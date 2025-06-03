@@ -12,7 +12,6 @@ import LinkedinIcon from '../assets/icons8-linkedin.svg'
 
 const Login = () => {
   const { globalState } = useGlobal()
-  const hehe = 'test husky' // Just a test for husky pre-commit hook
 
   const login = useGoogleLogin({
     onError: err => console.log(`useGoogleLogin | ${err}`),
