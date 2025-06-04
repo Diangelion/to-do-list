@@ -1,16 +1,16 @@
 import type {
   ApiResponse,
   BackendCustomResponse,
-  FetchOptions,
-} from './client.types'
+  FetchOptions
+} from '@/api/client.types'
 import {
-  createTimeoutSignal,
   combineSignals,
-  handleFetchError,
+  createTimeoutSignal,
+  handleFetchError
 } from '@/lib/client.utils'
 import {
   get as getLocalForage,
-  store as storeLocalForage,
+  store as storeLocalForage
 } from '@/lib/localForage.utils'
 
 const baseURL = import.meta.env.VITE_BASE_URL_API
@@ -34,17 +34,17 @@ const apiRequest = async <T>(
       Accept: 'application/json',
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...headers,
+      ...headers
     },
-    signal: combinedSignal,
+    signal: combinedSignal
   }
 
   try {
     const response = await fetch(url, requestOptions)
 
-    const newAccessToken =
-      response.headers.get('X-New-Access-Token') ||
-      response.headers.get('x-new-access-token')
+    const newAccessToken
+      = response.headers.get('X-New-Access-Token')
+      || response.headers.get('x-new-access-token')
 
     if (newAccessToken) {
       await storeLocalForage(
@@ -62,7 +62,7 @@ const apiRequest = async <T>(
     return {
       data,
       status: response.status,
-      message: response.statusText,
+      message: response.statusText
     }
   } catch (error) {
     console.error(`apiRequest | Api request error ${error}`)
@@ -74,32 +74,32 @@ export const get = <T>(
   endpoint: string,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-  apiRequest<T>(endpoint, { ...options, method: 'GET' })
+    apiRequest<T>(endpoint, { ...options, method: 'GET' })
 
 export const post = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-  apiRequest<T>(endpoint, {
-    ...options,
-    method: 'POST',
-    body: JSON.stringify(data),
-  })
+    apiRequest<T>(endpoint, {
+      ...options,
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
 
 export const put = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-  apiRequest<T>(endpoint, {
-    ...options,
-    method: 'PUT',
-    body: JSON.stringify(data),
-  })
+    apiRequest<T>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: JSON.stringify(data)
+    })
 
 export const del = <T>(
   endpoint: string,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-  apiRequest<T>(endpoint, { ...options, method: 'DELETE' })
+    apiRequest<T>(endpoint, { ...options, method: 'DELETE' })

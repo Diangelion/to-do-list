@@ -16,12 +16,14 @@ google-oauth-credentials.json
 components.json
 tsconfig.app.json
 tsconfig.json
+tsconfig.eslint.json
 tsconfig.node.json
 
 README.md
 
 vite.config.ts
 vite-env.d.ts
+declaration.d.ts
 eslint.config.js
 
 *.local

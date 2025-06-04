@@ -5,11 +5,19 @@ echo "Frontend pre-commit hook triggered."
 
 # Run lint-staged to lint only staged files
 echo "Linting staged files..."
+cd frontend || {
+  echo "❌ Failed to change directory to 'frontend'. Aborting commit.";
+  exit 1;
+}
+if ! command -v lint-staged &> /dev/null; then
+  echo "❌ lint-staged is not installed. Please install it to proceed.";
+  exit 1;
+fi
 npm run lint-staged || {
   # If lint-staged fails (exit with a non-zero code),
   # Husky will abort the commit.
   echo "❌ Linting errors found. Aborting commit.";
   exit 1;
 }
-
+cd ..
 echo "✅ All checks passed. Committing now..."
