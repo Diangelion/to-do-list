@@ -70,6 +70,7 @@ export const useFetchMutation = <TData, TVariables>(
             queryKey: [invalidateQueryKey]
           })
         }
+        return undefined
       },
       ...mutationOptions
     })
