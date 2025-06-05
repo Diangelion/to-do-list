@@ -13,15 +13,15 @@ const Login = () => {
   const login = useGoogleLogin({
     onError: err => console.log(`useGoogleLogin | ${err}`),
     ux_mode: 'redirect',
-    redirect_uri: globalState.env.VITE_GOOGLE_REDIRECT_URI,
+    redirect_uri: globalState.env.VITE_GOOGLE_REDIRECT_URI || '',
     flow: 'auth-code',
     select_account: true
   })
 
   const useGithubLogin = () => {
-    const githubClientId = globalState.env.VITE_GITHUB_CLIENT_ID
-    const githubRedirectURI = globalState.env.VITE_GITHUB_REDIRECT_URI
-    const baseGithubOauth = globalState.env.VITE_GITHUB_BASE_URL
+    const githubClientId = globalState.env.VITE_GITHUB_CLIENT_ID || ''
+    const githubRedirectURI = globalState.env.VITE_GITHUB_REDIRECT_URI || ''
+    const baseGithubOauth = globalState.env.VITE_GITHUB_BASE_URL || ''
     window.location.href = `${baseGithubOauth}?client_id=${githubClientId}&redirect_uri=${githubRedirectURI}&scope=read:user,user:email&prompt=consent`
   }
 
