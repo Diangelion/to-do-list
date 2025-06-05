@@ -1,22 +1,24 @@
-import { useCallback } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { del, get, post, put } from '@/api/client'
 import type {
-  UseQueryOptions,
-  UseQueryResult,
-  UseMutationOptions,
-  UseMutationResult,
-} from '@tanstack/react-query'
-import type {
+  ApiError,
   ApiResponse,
   BackendCustomResponse,
-  ApiError,
-  FetchOptions,
+  FetchOptions
 } from '@/api/client.types'
-import { get, post, put, del } from '@/api/client'
 import {
-  createQueryOptions,
   createMutationOptions,
+  createQueryOptions
 } from '@/lib/queryClient.utils'
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseMutationOptions,
+  type UseMutationResult,
+  type UseQueryOptions,
+  type UseQueryResult
+} from '@tanstack/react-query'
+import { useCallback } from 'react'
 
 // Custom hook for GET requests
 export const useFetchQuery = <T>(
@@ -30,7 +32,7 @@ export const useFetchQuery = <T>(
   const queryFn = useCallback(
     ({ signal }: { signal: AbortSignal }) =>
       get<T>(endpoint, { signal, ...fetchOptions }),
-    [endpoint]
+    [endpoint, fetchOptions]
   )
 
   return useQuery(
@@ -57,16 +59,19 @@ export const useFetchMutation = <TData, TVariables>(
 
   const mutationFn = useCallback(
     (variables: TVariables) => post<TData>(endpoint, variables, fetchOptions),
-    [endpoint]
+    [endpoint, fetchOptions]
   )
 
   return useMutation(
     createMutationOptions(mutationFn, {
-      onSuccess: () =>
-        invalidateQueryKey
-          ? queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] })
-          : null,
-      ...mutationOptions,
+      onSuccess: () => {
+        if (invalidateQueryKey) {
+          return queryClient.invalidateQueries({
+            queryKey: [invalidateQueryKey]
+          })
+        }
+      },
+      ...mutationOptions
     })
   )
 }
@@ -96,7 +101,7 @@ export const useFetchUpdateMutation = <TData, TVariables>(
     createMutationOptions(mutationFn, {
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-      ...mutationOptions,
+      ...mutationOptions
     })
   )
 }
@@ -118,7 +123,7 @@ export const useFetchDeleteMutation = <T>(
     createMutationOptions(mutationFn, {
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
-      ...mutationOptions,
+      ...mutationOptions
     })
   )
 }
