@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import { GlobalContext, initialContextValue } from './global.context'
 import type { GlobalState } from './global.context.types'
 
+// eslint-disable-next-line no-undef
 const initializeEnv = (): ImportMetaEnv => {
   const getEnvVar = (
+    // eslint-disable-next-line no-undef
     key: keyof ImportMetaEnv,
     defaultValue?: string
   ): string => {
-    const value = import.meta.env[key]
+    const value = import.meta.env[String(key)]
     if (value === undefined) {
       if (defaultValue !== undefined) return defaultValue
       throw new Error(`Missing environment variable: ${String(key)}`)
@@ -16,10 +18,11 @@ const initializeEnv = (): ImportMetaEnv => {
   }
 
   const getEnvNumber = (
+    // eslint-disable-next-line no-undef
     key: keyof ImportMetaEnv,
     defaultValue?: number
   ): number => {
-    const value = import.meta.env[key]
+    const value = import.meta.env[String(key)]
     if (value === undefined) {
       if (defaultValue !== undefined) return defaultValue
       throw new Error(`Missing environment variable: ${String(key)}`)
@@ -34,24 +37,13 @@ const initializeEnv = (): ImportMetaEnv => {
     return num
   }
 
-  const BASE_URL = import.meta.env.BASE_URL
-  const MODE = import.meta.env.MODE
-  const DEV = import.meta.env.DEV
-  const PROD = import.meta.env.PROD
-  const SSR = import.meta.env.SSR
-
   return {
-    BASE_URL,
-    MODE,
-    DEV,
-    PROD,
-    SSR,
     VITE_BASE_URL_API: getEnvVar('VITE_BASE_URL_API'),
     VITE_GOOGLE_CLIENT_ID: getEnvVar('VITE_GOOGLE_CLIENT_ID'),
     VITE_GOOGLE_REDIRECT_URI: getEnvVar('VITE_GOOGLE_REDIRECT_URI'),
     VITE_GITHUB_BASE_URL: getEnvVar('VITE_GITHUB_BASE_URL'),
     VITE_GITHUB_CLIENT_ID: getEnvVar('VITE_GITHUB_CLIENT_ID'),
-    VITE_GITHUB_CALLBACK_URL: getEnvVar('VITE_GITHUB_CALLBACK_URL'),
+    VITE_GITHUB_REDIRECT_URI: getEnvVar('VITE_GITHUB_REDIRECT_URI'),
     VITE_FACEBOOK_APP_ID: getEnvVar('VITE_FACEBOOK_APP_ID'),
     VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY: getEnvVar(
       'VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY'
@@ -59,9 +51,15 @@ const initializeEnv = (): ImportMetaEnv => {
     VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES: getEnvNumber(
       'VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES'
     ),
+    BASE_URL: getEnvVar('BASE_URL', '/'),
+    MODE: getEnvVar('MODE', 'development'),
+    DEV: import.meta.env.DEV,
+    PROD: import.meta.env.PROD,
+    SSR: import.meta.env.SSR
   }
 }
 
+// eslint-disable-next-line no-undef
 let initializedEnv: ImportMetaEnv
 try {
   initializedEnv = initializeEnv()
@@ -71,15 +69,20 @@ try {
 }
 
 const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
+  children
 }) => {
   const [globalState, setGlobalState] = useState<GlobalState>({
     ...initialContextValue.globalState,
-    env: initializedEnv,
+    env: initializedEnv
   })
 
+  const contextValue = React.useMemo(
+    () => ({ globalState, setGlobalState }),
+    [globalState, setGlobalState]
+  )
+
   return (
-    <GlobalContext.Provider value={{ globalState, setGlobalState }}>
+    <GlobalContext.Provider value={contextValue}>
       {children}
     </GlobalContext.Provider>
   )

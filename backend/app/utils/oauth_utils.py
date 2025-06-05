@@ -10,8 +10,8 @@ async def main_oauth(oauth: OAuth) -> UserCreate:
   match oauth.provider:
     case 'google':
       return await auth_google(oauth.token)
-    # case 'github':
-    #   return await auth_github(oauth.token)
+    case 'github':
+      return await auth_github(oauth.token)
     case _:
       raise ValueError("Unsupported OAuth provider")
 
@@ -25,8 +25,12 @@ async def auth_google(token: str) -> UserCreate:
   }
 
   async with httpx.AsyncClient() as client:
-    token_response = await client.post(settings.google_token_uri, data=token_data)
-    print(f'Token Response: {token_response}, status_code: {token_response.status_code}')
+    token_response = await client.post(
+      settings.google_token_uri,
+      data=token_data,
+      headers={'Content-Type': 'application/x-www-form-urlencoded'}
+    )
+    print(f'Status code: {token_response.status_code}')
 
     if token_response.status_code != status.HTTP_200_OK:
       error_detail = token_response.json().get('error_description', 'Unknown error')
@@ -58,4 +62,53 @@ async def auth_google(token: str) -> UserCreate:
     )
     return user
 
-# async def auth_github(token: str) -> UserCreate:
+async def auth_github(token: str) -> UserCreate:
+  token_data = {
+    'code': token,
+    'client_id': settings.github_client_id,
+    'client_secret': settings.github_client_secret,
+    'redirect_uri': settings.github_redirect_uri,
+  }
+
+  async with httpx.AsyncClient() as client:
+    token_response = await client.post(
+      settings.github_token_uri,
+      data=token_data,
+      headers={
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Accept-Encoding': 'application/json'
+      }
+    )
+    print(f'Status code: {token_response.status_code}')
+
+    if token_response.status_code != status.HTTP_200_OK:
+      error_detail = token_response.json().get('error_description', 'Unknown error')
+      error_message = f'GitHub OAuth token exchange failed: {error_detail}'
+      raise ConnectionError(error_message)
+
+    token_json = token_response.json()
+    print(f"Token JSON: {token_json}")
+    access_token = token_json.get('access_token')
+
+    if not access_token:
+      error_message = 'No access token received from GitHub'
+      raise ConnectionError(error_message)
+
+    user_response = await client.get(
+      settings.github_user_info_uri,
+      headers={'Authorization': f'Bearer {access_token}'}
+    )
+
+    if user_response.status_code != status.HTTP_200_OK:
+      error_detail = user_response.json().get('error_description', 'Unknown error')
+      error_message = f'Google OAuth token exchange failed: {error_detail}'
+
+    user_info = user_response.json()
+    user = UserCreate(
+      email=user_info.get('email') | '',
+      name=user_info.get('login'),
+      profile_picture=user_info.get('avatar_url')
+
+    )
+    return user

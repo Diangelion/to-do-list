@@ -20,9 +20,9 @@ const Login = () => {
 
   const useGithubLogin = () => {
     const githubClientId = globalState.env.VITE_GITHUB_CLIENT_ID
-    const githubCallbackURL = globalState.env.VITE_GITHUB_CALLBACK_URL
+    const githubRedirectURI = globalState.env.VITE_GITHUB_REDIRECT_URI
     const baseGithubOauth = globalState.env.VITE_GITHUB_BASE_URL
-    window.location.href = `${baseGithubOauth}?client_id=${githubClientId}&redirect_uri=${githubCallbackURL}`
+    window.location.href = `${baseGithubOauth}?client_id=${githubClientId}&redirect_uri=${githubRedirectURI}&scope=read:user,user:email&prompt=consent`
   }
 
   return (

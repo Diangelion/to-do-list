@@ -1,23 +1,27 @@
-# #!/bin/sh
-# . "$(dirname "$0")/_/husky.sh"
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-# echo "Frontend pre-push hook triggered."
+echo "Frontend pre-push hook triggered."
 
-# # Run ESLint
-# echo "🔍 Linting frontend..."
-# npm run lint-all || {
-#   # If lint-all fails (exit with a non-zero code),
-#   # Husky will abort the commit.
-#   echo "❌ ESLint checks failed. Please fix errors before pushing.";
-#   exit 1;
-# }
+# Run ESLint
+echo "🔍 Linting frontend..."
+cd frontend || {
+  echo "❌ Failed to change directory to 'frontend'.";
+  exit 1;
+}
+npm run lint-all || {
+  # If lint-all fails (exit with a non-zero code),
+  # Husky will abort the commit.
+  echo "❌ ESLint checks failed. Please fix errors before pushing.";
+  exit 1;
+}
 
-# # Optional: Run frontend tests (assuming a test script)
-# # echo "🧪 Running frontend tests..."
-# # npm test
-# # if [ $? -ne 0 ]; then
-# #   echo "❌ Frontend tests failed. Please fix errors before pushing."
-# #   exit 1
-# # fi
+# Optional: Run frontend tests (assuming a test script)
+# echo "🧪 Running frontend tests..."
+# npm test
+# if [ $? -ne 0 ]; then
+#   echo "❌ Frontend tests failed. Please fix errors before pushing."
+#   exit 1
+# fi
 
-# echo "✅ All checks passed. Pushing now..."
+echo "✅ All checks passed. Pushing now..."

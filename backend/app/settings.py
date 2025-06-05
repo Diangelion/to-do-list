@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     google_redirect_uri: str = Field(..., description='Google Redirect URI')
     google_user_info_uri: str = Field(..., description='Google User Info URI')
 
+    github_client_id: str = Field(..., description='GitHub Client ID')
+    github_client_secret: str = Field(..., description='GitHub Client Secret')
+    github_token_uri: str = Field(..., description='GitHub Token URI')
+    github_redirect_uri: str = Field(..., description='GitHub Redirect URI')
+    github_user_info_uri: str = Field(..., description='GitHub User Info URI')
+
     api_host: str = Field(..., description='API host')
     api_port: int = Field(..., description='API port')
     api_prefix: str = Field(..., description='API prefix path')

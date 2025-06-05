@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import type { AuthProviderProps, AuthState } from './auth.context.types'
-import { initialContextValue, AuthContext } from './auth.context'
-import { useLogoutUser, useVerifyUser } from '@/services/authService'
 import { clearLocalForage } from '@/lib/localForage.utils'
+import { useLogoutUser, useVerifyUser } from '@/services/authService'
+import React, { useCallback, useEffect, useState } from 'react'
 import useGlobal from '../global/useGlobal'
+import { AuthContext, initialContextValue } from './auth.context'
+import type { AuthProviderProps, AuthState } from './auth.context.types'
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { globalState } = useGlobal()
@@ -16,19 +16,19 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     error: verifyError,
     isLoading: isVerifying,
     isSuccess: isVerificationSuccess,
-    isError: isVerificationError,
+    isError: isVerificationError
   } = useVerifyUser({ credentials: 'include' })
 
   useEffect(() => {
     if (isVerificationSuccess && userData?.data?.data) {
       setAuthState({
         user: userData.data.data,
-        authenticated: true,
+        authenticated: true
       })
     } else if (isVerificationError || verifyError) {
       setAuthState({
         user: null,
-        authenticated: false,
+        authenticated: false
       })
     }
   }, [
@@ -36,12 +36,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyError,
     isVerificationSuccess,
     isVerificationError,
-    isVerifying,
+    isVerifying
   ])
 
   const { mutateAsync: logoutUser } = useLogoutUser()
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     let serverLogoutSuccessful = false
 
     try {
@@ -77,7 +77,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     setAuthState({
       user: null,
-      authenticated: false,
+      authenticated: false
     })
 
     if (!serverLogoutSuccessful) {
@@ -87,14 +87,21 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } else {
       console.log('Logout process fully completed.')
     }
-  }
+  }, [
+    logoutUser,
+    globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
+    setAuthState
+  ])
 
-  const value = {
-    authState,
-    setAuthState,
-    isVerifying,
-    logout,
-  }
+  const value = React.useMemo(
+    () => ({
+      authState,
+      setAuthState,
+      isVerifying,
+      logout
+    }),
+    [authState, setAuthState, isVerifying, logout]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

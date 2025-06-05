@@ -1,11 +1,11 @@
+import useGlobal from '@/contexts/global/useGlobal'
+import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
+import { storeWithExpiration } from '@/lib/localForage.utils'
+import { useCreateUser } from '@/services/authService'
 import { useEffect } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { PropagateLoader } from 'react-spinners'
 import { TypeAnimation } from 'react-type-animation'
-import { useSearchParams, useParams, useNavigate } from 'react-router'
-import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
-import useGlobal from '@/contexts/global/useGlobal'
-import { useCreateUser } from '@/services/authService'
-import { storeWithExpiration } from '@/lib/localForage.utils'
 
 const OAuth2 = () => {
   const { globalState } = useGlobal()
@@ -22,42 +22,47 @@ const OAuth2 = () => {
     onSuccess: async loginResponse => {
       if (loginResponse.status === 200) {
         await storeWithExpiration(
-          tokenKey!,
+          tokenKey || '',
           loginResponse.data?.data?.access_token,
           0,
           0,
-          expirationTime!
+          expirationTime
         )
-        navigate('/home')
+          .then(() => {
+            void navigate('/home')
+          })
+          .catch(() => {
+            void navigate('/')
+          })
       }
     },
     onError: () => {
-      navigate('/')
-    },
+      void navigate('/')
+    }
   })
 
   useEffect(() => {
     if (!code || !tokenKey || !expirationTime || !provider) {
-      navigate('/')
+      void navigate('/')
       return
     }
 
     createUserLogin({ token: code, provider })
-  }, [])
+  }, [code, tokenKey, expirationTime, provider, navigate, createUserLogin])
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen gap-y-10">
+    <div className='flex flex-col items-center justify-center w-full h-screen gap-y-10'>
       <TypeAnimation
-        preRenderFirstString={true}
+        preRenderFirstString
         sequence={propagateTypingSequence}
-        wrapper="h1"
-        cursor={true}
+        wrapper='h1'
+        cursor
         repeat={Infinity}
       />
       <PropagateLoader
         color={propagateLoaderColor}
-        aria-label="Loading Spinner"
-        data-testid="loader"
+        aria-label='Loading Spinner'
+        data-testid='loader'
       />
     </div>
   )
