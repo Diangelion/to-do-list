@@ -1,11 +1,11 @@
 import localforage from 'localforage'
-import { timeConversions } from './global.utils' // Assuming this utility is correctly defined
+import { timeConversions } from './utils'
 
 localforage.config({
   driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
   name: 'to-do-list',
   storeName: 'auth',
-  description: 'Storage for application authentication data.',
+  description: 'Storage for application authentication data.'
 })
 
 interface StoredItem {
@@ -24,7 +24,7 @@ export const store = async (
 
   const item: StoredItem = {
     value: token,
-    ...(ttl ? { expiresAt: Date.now() + ttl } : {}),
+    ...(ttl ? { expiresAt: Date.now() + ttl } : {})
   }
 
   try {

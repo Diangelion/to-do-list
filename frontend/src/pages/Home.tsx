@@ -1,9 +1,14 @@
+import AppSidebar from '@/components/common/AppSidebar'
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+
 const Home = () => {
   return (
-    <div>
-      Home
-      <button type="button">Logout</button>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+      </main>
+    </SidebarProvider>
   )
 }
 

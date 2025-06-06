@@ -12,5 +12,5 @@ export const timeConversions = {
   toTTL: (days: number = 0, hours: number = 0, minutes: number = 0) =>
     timeConversions.daysToSeconds(days) +
     timeConversions.hoursToSecond(hours) +
-    timeConversions.minutesToSeconds(minutes),
+    timeConversions.minutesToSeconds(minutes)
 }

@@ -14,7 +14,7 @@
   "htmlWhitespaceSensitivity": "css",
   "proseWrap": "preserve",
   "plugins": [
-    "prettier-plugin-tailwindcss",
-    "prettier-plugin-organize-imports"
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss"
   ]
 }
