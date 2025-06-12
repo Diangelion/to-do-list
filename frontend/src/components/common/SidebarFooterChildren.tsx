@@ -8,7 +8,7 @@ const SidebarFooterChildren = () => {
   return (
     <HoverCard>
       <HoverCardTrigger
-        className='hover-behavior flex aspect-square h-full items-center gap-x-5 rounded-md p-1 px-2'
+        className='hover-behavior flex aspect-square h-full items-center gap-x-5 rounded-sm p-1 px-2'
         title='Profile'
       >
         <img

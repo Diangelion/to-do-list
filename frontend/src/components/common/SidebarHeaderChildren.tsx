@@ -19,7 +19,7 @@ const SidebarHeaderChildren = () => {
         </div>
       </div>
       <div
-        className='hover-behavior w-full rounded-xl'
+        className='hover-behavior w-full rounded-sm'
         title='Create New Todos'
       >
         <div className='flex items-center gap-x-3 px-5 py-2'>

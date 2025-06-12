@@ -24,8 +24,12 @@
     @apply !shadow-[0_-2px_5px_1px_rgba(0,0,0,0.25)] dark:!shadow-[0_-2px_5px_1px_rgba(255,255,255,0.25)];
   }
 
-  .custom-scrollbar {
+  .shadow-inset-b-sm {
+    @apply shadow-[inset_0_-6px_4px_-2px_rgba(0,0,0,0.25)] dark:!shadow-[inset_0_-6px_4px_-2px_rgba(255,255,255,0.25)];
+  }
+
+  /* .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(153, 161, 175, 0.75) transparent;
-  }
+  } */
 }

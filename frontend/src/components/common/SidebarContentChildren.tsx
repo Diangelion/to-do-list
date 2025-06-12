@@ -1,3 +1,5 @@
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,6 +9,7 @@ import {
   SidebarMenuItem
 } from '@/components/ui/sidebar'
 import { Calendar } from 'lucide-react'
+import { Fragment } from 'react'
 
 const SidebarContentChildren = () => {
   // Menu items.
@@ -132,21 +135,27 @@ const SidebarContentChildren = () => {
       icon: Calendar
     }
   ]
+
   return (
-    <SidebarGroup className='custom-scrollbar h-full overflow-y-auto'>
+    <SidebarGroup>
       <SidebarGroupLabel className='text-md'>Todos</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map(item => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <a href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          <ScrollArea className='shadow-inset-b-sm h-[50dvh]'>
+            {items?.map(item => (
+              <Fragment key={item.title}>
+                <SidebarMenuItem className='hover-behavior rounded-sm'>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <Separator className='my-1' />
+              </Fragment>
+            ))}
+          </ScrollArea>
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

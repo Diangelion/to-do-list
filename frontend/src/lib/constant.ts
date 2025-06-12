@@ -11,7 +11,7 @@ export const loginTypingSequence = [
   1000,
   'to-do-list',
   500,
-  '',
+  ''
 ]
 
 export const propagateLoaderColor = '#fff'
@@ -27,5 +27,11 @@ export const propagateTypingSequence = [
   'Authenticating..',
   1000,
   'Authenticating.',
-  1000,
+  1000
+]
+
+export const tabChoices = [
+  { value: 'todos', label: 'To Do' },
+  { value: 'progress', label: 'On Progress' },
+  { value: 'done', label: 'Done' }
 ]

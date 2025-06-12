@@ -23,7 +23,7 @@ README.md
 
 vite.config.ts
 vite-env.d.ts
-declaration.d.ts
+declarations.d.ts
 eslint.config.js
 
 *.local
