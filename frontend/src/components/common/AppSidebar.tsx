@@ -11,13 +11,13 @@ import SidebarHeaderChildren from './SidebarHeaderChildren'
 const AppSidebar = () => {
   return (
     <Sidebar className='py-8'>
-      <SidebarHeader className='h-[20dvh]'>
+      <SidebarHeader className='h-[20%]'>
         <SidebarHeaderChildren />
       </SidebarHeader>
-      <SidebarContent className='h-[70dvh]'>
+      <SidebarContent className='h-[70%]'>
         <SidebarContentChildren />
       </SidebarContent>
-      <SidebarFooter className='h-[10dvh]'>
+      <SidebarFooter className='h-[10%]'>
         <SidebarFooterChildren />
       </SidebarFooter>
     </Sidebar>

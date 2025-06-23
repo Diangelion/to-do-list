@@ -1,4 +1,4 @@
-import type { ApiError } from '@/api/client.types'
+import type { ApiError } from '@/types/client.types'
 
 export const createTimeoutSignal = (timeout: number): AbortSignal => {
   const controller = new AbortController()
@@ -26,7 +26,7 @@ export const handleFetchError = (error: unknown): ApiError => {
         message: 'Request was cancelled',
         status: 0,
         code: 'ABORTED',
-        originalError: error,
+        originalError: error
       }
     }
     if (error.name === 'TypeError') {
@@ -34,7 +34,7 @@ export const handleFetchError = (error: unknown): ApiError => {
         message: 'Network error occurred',
         status: 0,
         code: 'NETWORK_ERROR',
-        originalError: error,
+        originalError: error
       }
     }
   }
@@ -43,6 +43,6 @@ export const handleFetchError = (error: unknown): ApiError => {
     message: error instanceof Error ? error.message : 'Unknown error occurred',
     status: 0,
     code: 'UNKNOWN_ERROR',
-    originalError: error,
+    originalError: error
   }
 }

@@ -1,12 +1,14 @@
 import { createContext } from 'react'
-import type { GlobalContextValue } from './global.context.types'
+import type { GlobalContextValue } from '../../types/global.context.types'
 
 export const initialContextValue: GlobalContextValue = {
   globalState: {
     env: {},
-    loading: false,
+    loading: false
   },
-  setGlobalState: () => {},
+  setGlobalState: () => {
+    throw new Error('setGlobalState function must be implemented')
+  }
 }
 
 export const GlobalContext =

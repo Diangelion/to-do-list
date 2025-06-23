@@ -1,14 +1,14 @@
 import { del, get, post, put } from '@/api/client'
+import {
+  createMutationOptions,
+  createQueryOptions
+} from '@/lib/queryClient.utils'
 import type {
   ApiError,
   ApiResponse,
   BackendCustomResponse,
   FetchOptions
-} from '@/api/client.types'
-import {
-  createMutationOptions,
-  createQueryOptions
-} from '@/lib/queryClient.utils'
+} from '@/types/client.types'
 import {
   useMutation,
   useQuery,

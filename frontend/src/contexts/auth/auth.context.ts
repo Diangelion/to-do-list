@@ -1,14 +1,16 @@
 import { createContext } from 'react'
-import type { AuthContextValue } from './auth.context.types'
+import type { AuthContextValue } from '../../types/auth.context.types'
 
 export const initialContextValue: AuthContextValue = {
   authState: {
     user: null,
-    authenticated: false,
+    authenticated: false
   },
-  setAuthState: () => {},
+  setAuthState: () => {
+    throw new Error('setAuthState function must be implemented')
+  },
   isVerifying: false,
-  logout: async () => {},
+  logout: async () => Promise.resolve()
 }
 
 export const AuthContext = createContext<AuthContextValue>(initialContextValue)

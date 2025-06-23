@@ -1,8 +1,3 @@
-import type {
-  ApiResponse,
-  BackendCustomResponse,
-  FetchOptions
-} from '@/api/client.types'
 import {
   combineSignals,
   createTimeoutSignal,
@@ -12,6 +7,11 @@ import {
   get as getLocalForage,
   store as storeLocalForage
 } from '@/lib/localForage.utils'
+import type {
+  ApiResponse,
+  BackendCustomResponse,
+  FetchOptions
+} from '@/types/client.types'
 
 const baseURL = import.meta.env.VITE_BASE_URL_API
 
@@ -42,9 +42,9 @@ const apiRequest = async <T>(
   try {
     const response = await fetch(url, requestOptions)
 
-    const newAccessToken
-      = response.headers.get('X-New-Access-Token')
-      || response.headers.get('x-new-access-token')
+    const newAccessToken =
+      response.headers.get('X-New-Access-Token') ||
+      response.headers.get('x-new-access-token')
 
     if (newAccessToken) {
       await storeLocalForage(

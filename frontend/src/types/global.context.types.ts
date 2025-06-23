@@ -1,13 +1,14 @@
-import type { ReactNode } from 'react'
+import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 export interface GlobalState {
+  // eslint-disable-next-line no-undef
   env: Partial<ImportMetaEnv>
   loading: boolean
 }
 
 export interface GlobalContextValue {
   globalState: GlobalState
-  setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>
+  setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }
 
 export interface GlobalProviderProps {

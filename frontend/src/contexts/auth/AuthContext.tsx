@@ -1,9 +1,12 @@
 import { clearLocalForage } from '@/lib/localForage.utils'
 import { useLogoutUser, useVerifyUser } from '@/services/authService'
 import React, { useCallback, useEffect, useState } from 'react'
+import type {
+  AuthProviderProps,
+  AuthState
+} from '../../types/auth.context.types'
 import useGlobal from '../global/useGlobal'
 import { AuthContext, initialContextValue } from './auth.context'
-import type { AuthProviderProps, AuthState } from './auth.context.types'
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { globalState } = useGlobal()
@@ -93,7 +96,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthState
   ])
 
-  const value = React.useMemo(
+  const contextValue = React.useMemo(
     () => ({
       authState,
       setAuthState,
@@ -103,7 +106,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     [authState, setAuthState, isVerifying, logout]
   )
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  )
 }
 
 export default AuthProvider

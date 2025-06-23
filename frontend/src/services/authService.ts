@@ -1,16 +1,16 @@
-import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
-import type { User } from '@/contexts/auth/auth.context.types'
-import { useFetchQuery, useFetchMutation } from '@/hooks/useFetchQuery'
+import { useFetchMutation, useFetchQuery } from '@/hooks/useFetchQuery'
 import type {
   CreateUserRequest,
-  CreateUserResponse,
-} from '@/api/auth/auth.api.types'
+  CreateUserResponse
+} from '@/types/auth.api.types'
+import type { User } from '@/types/auth.context.types'
 import type {
   ApiError,
-  BackendCustomResponse,
   ApiResponse,
-  FetchOptions,
-} from '@/api/client.types'
+  BackendCustomResponse,
+  FetchOptions
+} from '@/types/client.types'
+import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 
 export const useVerifyUser = (
   fetchOptions?: FetchOptions,
@@ -35,7 +35,7 @@ export const useCreateUser = (
   >
 ) => {
   return useFetchMutation<CreateUserResponse, CreateUserRequest>(
-    `/users/login`,
+    '/users/login',
     null,
     fetchOptions,
     mutationOptions

@@ -31,7 +31,7 @@ export const propagateTypingSequence = [
 ]
 
 export const tabChoices = [
-  { value: 'todos', label: 'To Do' },
+  { value: 'todo', label: 'To Do' },
   { value: 'progress', label: 'On Progress' },
   { value: 'done', label: 'Done' }
 ]

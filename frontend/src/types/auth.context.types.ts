@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { Dispatch, ReactNode, SetStateAction } from 'react'
 
 export interface User {
   name: string
@@ -13,7 +13,7 @@ export interface AuthState {
 
 export interface AuthContextValue {
   authState: AuthState
-  setAuthState: React.Dispatch<React.SetStateAction<AuthState>>
+  setAuthState: Dispatch<SetStateAction<AuthState>>
   isVerifying: boolean
   logout: () => Promise<void>
 }

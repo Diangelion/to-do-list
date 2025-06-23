@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
+import type { GlobalState } from '../../types/global.context.types'
 import { GlobalContext, initialContextValue } from './global.context'
-import type { GlobalState } from './global.context.types'
 
 // eslint-disable-next-line no-undef
 const initializeEnv = (): ImportMetaEnv => {

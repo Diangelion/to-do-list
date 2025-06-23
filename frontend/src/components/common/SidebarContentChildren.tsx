@@ -141,10 +141,10 @@ const SidebarContentChildren = () => {
       <SidebarGroupLabel className='text-md'>Todos</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          <ScrollArea className='shadow-inset-b-sm h-[50dvh]'>
-            {items?.map(item => (
-              <Fragment key={item.title}>
-                <SidebarMenuItem className='hover-behavior rounded-sm'>
+          <ScrollArea className='shadow-inset-b-sm h-[20rem] whitespace-nowrap'>
+            {items.map((item, i) => (
+              <Fragment key={`Date.now()-${item.title}-${i}`}>
+                <SidebarMenuItem className='hover-behaviour rounded-sm'>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon />

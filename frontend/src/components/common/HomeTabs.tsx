@@ -9,12 +9,12 @@ const HomeTabs = () => {
 
   return (
     <Tabs defaultValue={chosenTab} onValueChange={tab => setChosenTab(tab)}>
-      <TabsList className='mx-auto flex h-[10dvh] w-full justify-center gap-x-2'>
+      <TabsList className='mx-auto flex h-[3rem] w-full justify-center gap-x-2'>
         {tabChoices.map(({ value, label }, i) => (
           <TabsTrigger
             key={`${value}-${i}`}
             value={value}
-            className={`hover-behavior text-md ${chosenTab === value ? 'bg-gray-300/20' : ''}`}
+            className={`hover-behaviour text-md ${chosenTab === value ? 'bg-gray-300/20' : ''}`}
           >
             {label}
           </TabsTrigger>
