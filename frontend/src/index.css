@@ -10,6 +10,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@theme {
+  --color-primary: oklch(0.982 0.0041 91.45);
+  --color-dark-primary: oklch(0.1939 0.0151 18.54);
+  --color-accent: oklch(0.9164 0.073 77.44);
+  --color-dark-accent: oklch(0.3393 0.0088 145.38);
+  --color-hover: oklch(87.2% 0.01 258.338 / 0.2);
+}
+
 @layer components {
   .card-todo {
     @apply h-[15rem];
@@ -21,7 +29,7 @@
 @layer utilities {
   .hover-behaviour {
     @apply cursor-pointer transition-colors duration-200;
-    @apply hover:bg-gray-300/20;
+    @apply hover:bg-hover;
   }
 
   .shadow-behavior {

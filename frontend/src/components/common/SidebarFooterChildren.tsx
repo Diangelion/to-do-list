@@ -8,7 +8,7 @@ const SidebarFooterChildren = () => {
   return (
     <HoverCard>
       <HoverCardTrigger
-        className='hover-behaviour flex h-full items-center gap-x-5 rounded-sm p-1 px-2'
+        className='hover-behaviour flex h-full items-center gap-x-5 rounded-sm px-2'
         title='Profile'
       >
         <img
@@ -18,7 +18,7 @@ const SidebarFooterChildren = () => {
         />
         <p>John Doe</p>
       </HoverCardTrigger>
-      <HoverCardContent className='shadow-behavior mx-auto flex h-[30dvh] w-fit flex-col items-center justify-center gap-y-2 border-none bg-white p-2 text-center opacity-85 dark:bg-black'>
+      <HoverCardContent className='shadow-behavior mx-auto flex h-[30dvh] w-fit flex-col items-center justify-center gap-y-2 border-none p-2 text-center opacity-85'>
         <div className='mx-auto h-1/2 w-auto'>
           <img
             className='h-full w-full rounded-full'

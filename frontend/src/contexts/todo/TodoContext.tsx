@@ -97,7 +97,12 @@ const TodoProvider: React.FC<{ children: React.ReactNode }> = ({
             progress: fakeData.filter(todo => todo.status === 1),
             done: fakeData.filter(todo => todo.status === 2)
           }
-          setTodoState(prev => ({ ...prev, todoItem, loading: false }))
+          setTodoState(prev => ({
+            ...prev,
+            selectedDate: '24-06-2025',
+            todoItem,
+            loading: false
+          }))
         } catch (err) {
           console.log(err)
           setTodoState(prev => ({ ...prev, loading: false }))

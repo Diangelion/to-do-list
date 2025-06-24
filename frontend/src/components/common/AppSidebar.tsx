@@ -14,10 +14,10 @@ const AppSidebar = () => {
       <SidebarHeader className='h-[20%]'>
         <SidebarHeaderChildren />
       </SidebarHeader>
-      <SidebarContent className='h-[70%]'>
+      <SidebarContent className='h-[67.5%]'>
         <SidebarContentChildren />
       </SidebarContent>
-      <SidebarFooter className='h-[10%]'>
+      <SidebarFooter className='h-[12.5%]'>
         <SidebarFooterChildren />
       </SidebarFooter>
     </Sidebar>

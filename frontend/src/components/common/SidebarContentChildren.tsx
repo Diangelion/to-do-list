@@ -8,129 +8,32 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar'
+import useTodo from '@/contexts/todo/useTodo'
+import { cn } from '@/lib/utils'
 import { Calendar } from 'lucide-react'
 import { Fragment } from 'react'
 
 const SidebarContentChildren = () => {
+  const { todoState, setTodoState } = useTodo()
   // Menu items.
   const items = [
     {
-      title: 'Home',
+      title: '24-06-2025',
       url: '#',
       icon: Calendar
     },
     {
-      title: 'Inbox',
+      title: '23-06-2025',
       url: '#',
       icon: Calendar
     },
     {
-      title: 'Calendar',
+      title: '22-06-2025',
       url: '#',
       icon: Calendar
     },
     {
-      title: 'Search',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Calendar
-    },
-    {
-      title: 'Settings',
+      title: '21-06-2025',
       url: '#',
       icon: Calendar
     }
@@ -141,10 +44,21 @@ const SidebarContentChildren = () => {
       <SidebarGroupLabel className='text-md'>Todos</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          <ScrollArea className='shadow-inset-b-sm h-[20rem] whitespace-nowrap'>
+          <ScrollArea className='shadow-inset-b-sm h-[19rem] whitespace-nowrap'>
             {items.map((item, i) => (
-              <Fragment key={`Date.now()-${item.title}-${i}`}>
-                <SidebarMenuItem className='hover-behaviour rounded-sm'>
+              <Fragment key={`${item.title}-${i}`}>
+                <SidebarMenuItem
+                  className={cn(
+                    'hover-behaviour rounded-sm',
+                    item.title === todoState.selectedDate && 'bg-hover'
+                  )}
+                  onClick={() =>
+                    setTodoState(prev => ({
+                      ...prev,
+                      selectedDate: item.title
+                    }))
+                  }
+                >
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon />
