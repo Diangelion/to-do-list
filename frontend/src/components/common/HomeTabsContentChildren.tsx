@@ -15,7 +15,7 @@ const HomeTabsContentChildrent = ({ todo }: { todo: TodoItem }) => {
     <Card className='card-todo'>
       <CardHeader>
         <CardTitle>{todo.title}</CardTitle>
-        <Separator className='mt-2 bg-white' />
+        <Separator className='bg-accent mt-2' />
       </CardHeader>
       <CardContent className='flex h-full flex-col justify-between'>
         <CardDescription className='line-clamp-4'>
@@ -23,7 +23,11 @@ const HomeTabsContentChildrent = ({ todo }: { todo: TodoItem }) => {
         </CardDescription>
         <CardAction className='self-end'>
           <div className='hover-behaviour flex h-8 w-8 items-center justify-center rounded-full'>
-            <Trash2 width={16} height={16} color='red' />
+            <Trash2
+              width={16}
+              height={16}
+              className='text-primary-foreground'
+            />
           </div>
         </CardAction>
       </CardContent>

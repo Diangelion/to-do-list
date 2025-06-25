@@ -10,20 +10,24 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   )
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme')
-    if (saved && ['light', 'dark'].includes(saved)) {
-      setThemeState(prev => ({ ...prev, theme: saved as 'light' | 'dark' }))
-      document.documentElement.classList.toggle('dark', saved === 'dark')
-    }
+    console.log(window.matchMedia('(prefers-color-scheme: dark)'))
   }, [])
 
-  useEffect(() => {
-    document.documentElement.classList.toggle(
-      'dark',
-      themeState.theme === 'dark'
-    )
-    localStorage.setItem('theme', themeState.theme)
-  }, [themeState.theme])
+  // useEffect(() => {
+  //   const saved = localStorage.getItem('theme')
+  //   if (saved && ['light', 'dark'].includes(saved)) {
+  //     setThemeState(prev => ({ ...prev, theme: saved as 'light' | 'dark' }))
+  //     document.documentElement.classList.toggle('dark', saved === 'dark')
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   document.documentElement.classList.toggle(
+  //     'dark',
+  //     themeState.theme === 'dark'
+  //   )
+  //   localStorage.setItem('theme', themeState.theme)
+  // }, [themeState.theme])
 
   const toggleTheme = React.useCallback(() => {
     setThemeState(prev => ({

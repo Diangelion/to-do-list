@@ -36,7 +36,11 @@ const NewDateDialog = () => {
             title='Create New Todos'
           >
             <div className='flex items-center gap-x-3 px-5 py-2'>
-              <CirclePlus width={20} height={20} />{' '}
+              <CirclePlus
+                width={20}
+                height={20}
+                className='text-secondary-foreground'
+              />{' '}
               <p className='text-sm'>New Date</p>
             </div>
           </div>
@@ -57,9 +61,9 @@ const NewDateDialog = () => {
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  variant='outline'
                   id='date'
-                  className='hover-behaviour w-48 justify-between font-normal'
+                  variant='secondary'
+                  className='w-48 cursor-pointer justify-between font-normal'
                 >
                   {date ? date.toLocaleDateString() : 'Select date'}
                   <ChevronDownIcon />
@@ -77,6 +81,7 @@ const NewDateDialog = () => {
                     setDate(date)
                     setOpen(false)
                   }}
+                  className='[[data-slot=popover-content]_&]:bg-primary'
                 />
               </PopoverContent>
             </Popover>
@@ -84,11 +89,15 @@ const NewDateDialog = () => {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button className='hover-behaviour' variant='ghost'>
+              <Button className='cursor-pointer' variant='secondary'>
                 Cancel
               </Button>
             </DialogClose>
-            <Button className='hover-behaviour' variant='ghost' type='submit'>
+            <Button
+              className='cursor-pointer'
+              variant='secondary'
+              type='submit'
+            >
               Add
             </Button>
           </DialogFooter>

@@ -17,7 +17,7 @@ const HomeTabsContent = ({ chosenTab }: HomeTabsContentProps) => {
       {isEmpty ? (
         <Loading height='h-[80dvh]' />
       ) : (
-        <ScrollArea className='shadow-inset-b-sm h-[80dvh]'>
+        <ScrollArea className='shadow-inset-b-sm h-[calc(80dvh-4rem)]'>
           <div className='flex w-full flex-wrap gap-y-5 py-2'>
             {todos.map((todo: TodoItem, i: number) => (
               <HomeTabsContentChildrent key={i} todo={todo} />
