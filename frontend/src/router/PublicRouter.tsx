@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router'
 
 const PublicRouter = ({ redirectPath = '/home' }) => {
   const { authState } = useAuth()
-  if (authState.authenticated) return <Navigate to={redirectPath} replace />
+  if (authState.isAuthenticated) return <Navigate to={redirectPath} replace />
   return <Outlet />
 }
 
