@@ -1,9 +1,9 @@
+import { ScrollArea } from '@/components/ui/scroll-area'
 import useTodo from '@/contexts/todo/useTodo'
 import Loading from '@/pages/Loading'
 import type { HomeTabsContentProps } from '@/types/tabs.types'
 import type { TodoItem } from '@/types/todo.items.types'
 import { TabsContent } from '@radix-ui/react-tabs'
-import { ScrollArea } from '../ui/scroll-area'
 import HomeTabsContentChildrent from './HomeTabsContentChildren'
 
 const HomeTabsContent = ({ chosenTab }: HomeTabsContentProps) => {

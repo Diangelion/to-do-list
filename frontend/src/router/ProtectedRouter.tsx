@@ -1,10 +1,8 @@
-import { Navigate, Outlet } from 'react-router'
 import useAuth from '@/contexts/auth/useAuth'
-import Loading from '@/pages/Loading'
+import { Navigate, Outlet } from 'react-router'
 
 const ProtectedRouter = ({ redirectPath = '/login' }) => {
-  const { authState, isVerifying } = useAuth()
-  if (isVerifying) return <Loading />
+  const { authState } = useAuth()
   if (!authState.authenticated) return <Navigate to={redirectPath} replace />
   return <Outlet />
 }

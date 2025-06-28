@@ -1,10 +1,15 @@
 import type { ThemeState } from '@/types/theme.context.types'
-import React, { useEffect, useState } from 'react'
+import {
+  type FC,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { initialContextValue, ThemeContext } from './theme.context'
 
-const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [themeState, setThemeState] = useState<ThemeState>(
     initialContextValue.themeState
   )
@@ -29,14 +34,14 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   //   localStorage.setItem('theme', themeState.theme)
   // }, [themeState.theme])
 
-  const toggleTheme = React.useCallback(() => {
+  const toggleTheme = useCallback(() => {
     setThemeState(prev => ({
       ...prev,
       theme: prev.theme === 'light' ? 'dark' : 'light'
     }))
   }, [])
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({ themeState, setThemeState, toggleTheme }),
     [themeState, setThemeState, toggleTheme]
   )

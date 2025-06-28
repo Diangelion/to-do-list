@@ -6,9 +6,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import type { TodoItem } from '@/types/todo.items.types'
 import { Trash2 } from 'lucide-react'
-import { Separator } from '../ui/separator'
 
 const HomeTabsContentChildrent = ({ todo }: { todo: TodoItem }) => {
   return (

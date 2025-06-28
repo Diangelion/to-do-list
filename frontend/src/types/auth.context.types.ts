@@ -8,14 +8,12 @@ export interface User {
 
 export interface AuthState {
   user: Partial<User> | null
-  authenticated: boolean
+  isAuthenticated: boolean
 }
 
 export interface AuthContextValue {
   authState: AuthState
   setAuthState: Dispatch<SetStateAction<AuthState>>
-  isVerifying: boolean
-  logout: () => Promise<void>
 }
 
 export interface AuthProviderProps {

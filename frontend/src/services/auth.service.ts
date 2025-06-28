@@ -12,20 +12,6 @@ import type {
 } from '@/types/client.types'
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 
-export const useVerifyUser = (
-  fetchOptions?: FetchOptions,
-  queryOptions?: Partial<
-    UseQueryOptions<ApiResponse<BackendCustomResponse<User>>, ApiError>
-  >
-) => {
-  return useFetchQuery<User>(
-    '/users/profile',
-    ['users'],
-    fetchOptions,
-    queryOptions
-  )
-}
-
 export const useCreateUser = (
   fetchOptions?: FetchOptions,
   mutationOptions?: UseMutationOptions<
@@ -39,6 +25,20 @@ export const useCreateUser = (
     null,
     fetchOptions,
     mutationOptions
+  )
+}
+
+export const useVerifyUser = (
+  fetchOptions?: FetchOptions,
+  queryOptions?: Partial<
+    UseQueryOptions<ApiResponse<BackendCustomResponse<User>>, ApiError>
+  >
+) => {
+  return useFetchQuery<User>(
+    '/users/profile',
+    ['users'],
+    fetchOptions,
+    queryOptions
   )
 }
 

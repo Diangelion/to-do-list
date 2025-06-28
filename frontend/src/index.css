@@ -195,6 +195,10 @@
     @apply mx-[0.25rem] sm:mx-[0.5rem];
     @apply w-[calc((100%-1rem)/2)] sm:w-[calc((100%-3rem)/3)] xl:w-[calc((100%-4rem)/4)] 2xl:w-[calc((100%-5rem)/5)];
   }
+
+  .card-alert {
+    @apply !w-[50%] sm:!w-[calc(100%/3)] lg:!w-96;
+  }
 }
 
 @layer utilities {

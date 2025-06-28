@@ -1,5 +1,5 @@
-import AppSidebar from '@/components/common/AppSidebar'
-import HomeTabs from '@/components/common/HomeTabs'
+import HomeTabs from '@/components/common/Home/HomeTabs'
+import AppSidebar from '@/components/common/Sidebar/AppSidebar'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import TodoProvider from '@/contexts/todo/TodoContext'
 

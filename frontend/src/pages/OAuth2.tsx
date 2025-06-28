@@ -1,57 +1,39 @@
-import useGlobal from '@/contexts/global/useGlobal'
 import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
-import { storeWithExpiration } from '@/lib/localForage.utils'
-import { useCreateUser } from '@/services/authService'
+import { useCreateUser } from '@/services/auth.service'
+import { tokenService } from '@/services/token.service'
 import { useEffect } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { PropagateLoader } from 'react-spinners'
 import { TypeAnimation } from 'react-type-animation'
 
 const OAuth2 = () => {
-  const { globalState } = useGlobal()
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const { provider = '' } = useParams()
 
+  const [searchParams] = useSearchParams()
   const code = searchParams.get('code')
-  const tokenKey = globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
-  const expirationTime =
-    globalState.env.VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES
+
+  const { provider } = useParams()
 
   const { mutate: createUserLogin } = useCreateUser(undefined, {
     onSuccess: async loginResponse => {
       if (loginResponse.status === 200) {
-        await storeWithExpiration(
-          tokenKey || '',
-          loginResponse.data?.data?.access_token,
-          0,
-          0,
-          expirationTime
-        )
-          .then(() => {
-            void navigate('/home')
-          })
-          .catch(() => {
-            void navigate('/')
-          })
+        await tokenService
+          .set(loginResponse.data.data.access_token)
+          .then(() => void navigate('/home'))
+          .catch(() => void navigate('/'))
       }
+      return void navigate('/')
     },
-    onError: () => {
-      void navigate('/')
-    }
+    onError: () => void navigate('/')
   })
 
   useEffect(() => {
-    if (!code || !tokenKey || !expirationTime || !provider) {
-      void navigate('/')
-      return
-    }
-
+    if (!provider || !code) return void navigate('/')
     createUserLogin({ token: code, provider })
-  }, [code, tokenKey, expirationTime, provider, navigate, createUserLogin])
+  }, [code, provider, navigate, createUserLogin])
 
   return (
-    <div className='flex flex-col items-center justify-center w-full h-screen gap-y-10'>
+    <div className='OAuth2_Page flex h-screen w-full flex-col items-center justify-center gap-y-10'>
       <TypeAnimation
         preRenderFirstString
         sequence={propagateTypingSequence}

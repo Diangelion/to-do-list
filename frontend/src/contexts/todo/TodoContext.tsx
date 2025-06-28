@@ -1,10 +1,8 @@
 import type { TodoItem, TodoState } from '@/types/todo.items.types'
-import React, { useEffect, useState } from 'react'
+import { type FC, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { TodoContext, initialContextValue } from './todo.context'
 
-const TodoProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+const TodoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [todoState, setTodoState] = useState<TodoState>(
     initialContextValue.todoState
   )
@@ -112,7 +110,7 @@ const TodoProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchUsers()
   }, [])
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({ todoState, setTodoState }),
     [todoState, setTodoState]
   )

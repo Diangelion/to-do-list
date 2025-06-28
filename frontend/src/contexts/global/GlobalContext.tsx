@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useMemo, useState, type FC, type ReactNode } from 'react'
 import type { GlobalState } from '../../types/global.context.types'
 import { GlobalContext, initialContextValue } from './global.context'
 
@@ -17,25 +17,25 @@ const initializeEnv = (): ImportMetaEnv => {
     return String(value)
   }
 
-  const getEnvNumber = (
-    // eslint-disable-next-line no-undef
-    key: keyof ImportMetaEnv,
-    defaultValue?: number
-  ): number => {
-    const value = import.meta.env[String(key)]
-    if (value === undefined) {
-      if (defaultValue !== undefined) return defaultValue
-      throw new Error(`Missing environment variable: ${String(key)}`)
-    }
-    const num = parseInt(String(value), 10)
-    if (isNaN(num)) {
-      if (defaultValue !== undefined) return defaultValue
-      throw new Error(
-        `Invalid number for environment variable ${String(key)}: ${value}`
-      )
-    }
-    return num
-  }
+  // const getEnvNumber = (
+  //   // eslint-disable-next-line no-undef
+  //   key: keyof ImportMetaEnv,
+  //   defaultValue?: number
+  // ): number => {
+  //   const value = import.meta.env[String(key)]
+  //   if (value === undefined) {
+  //     if (defaultValue !== undefined) return defaultValue
+  //     throw new Error(`Missing environment variable: ${String(key)}`)
+  //   }
+  //   const num = parseInt(String(value), 10)
+  //   if (isNaN(num)) {
+  //     if (defaultValue !== undefined) return defaultValue
+  //     throw new Error(
+  //       `Invalid number for environment variable ${String(key)}: ${value}`
+  //     )
+  //   }
+  //   return num
+  // }
 
   return {
     VITE_BASE_URL_API: getEnvVar('VITE_BASE_URL_API'),
@@ -48,9 +48,8 @@ const initializeEnv = (): ImportMetaEnv => {
     VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY: getEnvVar(
       'VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY'
     ),
-    VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES: getEnvNumber(
-      'VITE_LOCAL_FORAGE_ACCESS_EXPIRATION_TIME_MINUTES'
-    ),
+    VITE_ENCRYPTION_KEY: getEnvVar('VITE_ENCRYPTION_KEY'),
+
     BASE_URL: getEnvVar('BASE_URL', '/'),
     MODE: getEnvVar('MODE', 'development'),
     DEV: import.meta.env.DEV,
@@ -68,15 +67,13 @@ try {
   throw error
 }
 
-const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
+const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [globalState, setGlobalState] = useState<GlobalState>({
     ...initialContextValue.globalState,
     env: initializedEnv
   })
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({ globalState, setGlobalState }),
     [globalState, setGlobalState]
   )

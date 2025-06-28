@@ -3,10 +3,8 @@ import {
   createTimeoutSignal,
   handleFetchError
 } from '@/lib/client.utils'
-import {
-  get as getLocalForage,
-  store as storeLocalForage
-} from '@/lib/localForage.utils'
+
+import { tokenService } from '@/services/token.service'
 import type {
   ApiResponse,
   BackendCustomResponse,
@@ -24,9 +22,7 @@ const apiRequest = async <T>(
   const url = `${baseURL}${endpoint}`
   const timeoutSignal = createTimeoutSignal(timeout)
   const combinedSignal = combineSignals(signal, timeoutSignal)
-  const accessToken = await getLocalForage(
-    import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
-  )
+  const accessToken = await tokenService.ensureFreshToken()
 
   const requestOptions: RequestInit = {
     ...fetchOptions,
@@ -42,17 +38,6 @@ const apiRequest = async <T>(
   try {
     const response = await fetch(url, requestOptions)
 
-    const newAccessToken =
-      response.headers.get('X-New-Access-Token') ||
-      response.headers.get('x-new-access-token')
-
-    if (newAccessToken) {
-      await storeLocalForage(
-        import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
-        newAccessToken
-      )
-    }
-
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`)
     }
@@ -65,7 +50,6 @@ const apiRequest = async <T>(
       message: response.statusText
     }
   } catch (error) {
-    console.error(`apiRequest | Api request error ${error}`)
     throw handleFetchError(error)
   }
 }
@@ -74,32 +58,56 @@ export const get = <T>(
   endpoint: string,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-    apiRequest<T>(endpoint, { ...options, method: 'GET' })
+  apiRequest<T>(endpoint, { ...options, method: 'GET' })
 
 export const post = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-    apiRequest<T>(endpoint, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(data)
-    })
+  apiRequest<T>(endpoint, {
+    ...options,
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
 
 export const put = <T>(
   endpoint: string,
   data?: unknown,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-    apiRequest<T>(endpoint, {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify(data)
-    })
+  apiRequest<T>(endpoint, {
+    ...options,
+    method: 'PUT',
+    body: JSON.stringify(data)
+  })
 
 export const del = <T>(
   endpoint: string,
   options?: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> =>
-    apiRequest<T>(endpoint, { ...options, method: 'DELETE' })
+  apiRequest<T>(endpoint, { ...options, method: 'DELETE' })
+
+export const refreshAccessToken = async (): Promise<string | null> => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_URL_API}/auth/refresh`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (!response.ok) throw new Error('Refresh access token failed')
+    const json = await response.json()
+    console.log(json)
+    const newToken = json.access_token
+    if (newToken) return newToken
+    return null
+  } catch {
+    return null
+  }
+}

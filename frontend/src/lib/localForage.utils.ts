@@ -1,3 +1,4 @@
+import type { StoredItem } from '@/types/browser.storage.types'
 import localforage from 'localforage'
 import { timeConversions } from './utils'
 
@@ -8,32 +9,14 @@ localforage.config({
   description: 'Storage for application authentication data.'
 })
 
-interface StoredItem {
-  value: string
-  expiresAt?: number
-}
-
 export const store = async (
   key: string,
-  token: string,
+  value: string,
   ttl?: number
-): Promise<boolean> => {
-  if (!token) {
-    throw new Error('No token provided to store.')
-  }
-
-  const item: StoredItem = {
-    value: token,
-    ...(ttl ? { expiresAt: Date.now() + ttl } : {})
-  }
-
-  try {
-    await localforage.setItem(key, item)
-    return true
-  } catch (error) {
-    console.error('Error storing item in localForage:', error)
-    throw error
-  }
+): Promise<void> => {
+  const data: StoredItem = { value }
+  if (ttl) data.expiresAt = Date.now() + ttl
+  await localforage.setItem(key, data)
 }
 
 export const storeWithExpiration = async (
@@ -42,7 +25,7 @@ export const storeWithExpiration = async (
   days: number = 0,
   hours: number = 0,
   minutes: number = 0
-): Promise<boolean> => {
+): Promise<void> => {
   const ttlMilliseconds = timeConversions.toTTL(days, hours, minutes) * 1000
   return store(key, value, ttlMilliseconds)
 }
@@ -50,40 +33,22 @@ export const storeWithExpiration = async (
 export const get = async (
   key: string,
   now?: number
-): Promise<string | null> => {
-  try {
-    const item: StoredItem | null = await localforage.getItem(key)
-
-    if (!item) {
-      return null
-    }
-
-    const currentTime = now !== undefined ? now : Date.now()
-
-    if (item.expiresAt && currentTime > item.expiresAt) {
-      await clearLocalForage(key)
-      return null
-    }
-
-    return item.value
-  } catch (error) {
-    console.error('Error retrieving item from localForage:', error)
-    throw error
+): Promise<StoredItem | null> => {
+  const item: StoredItem | null = await localforage.getItem(key)
+  const currentTime = now !== undefined ? now : Date.now()
+  if (item?.expiresAt && currentTime > item?.expiresAt) {
+    await clear(key)
+    return null
   }
+  return item
 }
 
 export const getWithExpiration = async (
   key: string
-): Promise<string | null> => {
+): Promise<StoredItem | null> => {
   return get(key, Date.now())
 }
 
-export const clearLocalForage = async (key: string): Promise<boolean> => {
-  try {
-    await localforage.removeItem(key)
-    return true
-  } catch (error) {
-    console.error('Error clearing localForage item:', error)
-    throw error
-  }
+export const clear = async (key: string): Promise<void> => {
+  await localforage.removeItem(key)
 }

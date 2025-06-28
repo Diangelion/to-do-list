@@ -1,5 +1,5 @@
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Search } from 'lucide-react'
-import { SidebarTrigger } from '../ui/sidebar'
 import NewDateDialog from './NewDateDialog'
 
 const SidebarHeaderChildren = () => {

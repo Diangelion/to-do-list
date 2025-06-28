@@ -1,6 +1,7 @@
-import { clearLocalForage } from '@/lib/localForage.utils'
-import { useLogoutUser, useVerifyUser } from '@/services/authService'
-import React, { useCallback, useEffect, useState } from 'react'
+import { useVerifyUser } from '@/services/auth.service'
+import { tokenService } from '@/services/token.service'
+import type { StoredItem } from '@/types/browser.storage.types'
+import { type FC, useEffect, useMemo, useState } from 'react'
 import type {
   AuthProviderProps,
   AuthState
@@ -8,102 +9,61 @@ import type {
 import useGlobal from '../global/useGlobal'
 import { AuthContext, initialContextValue } from './auth.context'
 
-const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { globalState } = useGlobal()
+const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+  const { setGlobalState } = useGlobal()
   const [authState, setAuthState] = useState<AuthState>(
     initialContextValue.authState
   )
-
-  const {
-    data: userData,
-    error: verifyError,
-    isLoading: isVerifying,
-    isSuccess: isVerificationSuccess,
-    isError: isVerificationError
-  } = useVerifyUser({ credentials: 'include' })
+  const [accessToken, setAccessToken] = useState<string | null>(null)
 
   useEffect(() => {
-    if (isVerificationSuccess && userData?.data?.data) {
-      setAuthState({
-        user: userData.data.data,
-        authenticated: true
-      })
-    } else if (isVerificationError || verifyError) {
-      setAuthState({
-        user: null,
-        authenticated: false
-      })
+    const loadToken = async () => {
+      const token: StoredItem | null = await tokenService.get()
+      setAccessToken(token?.value || null)
     }
-  }, [
-    userData,
-    verifyError,
-    isVerificationSuccess,
-    isVerificationError,
-    isVerifying
-  ])
+    void loadToken()
+  }, [])
 
-  const { mutateAsync: logoutUser } = useLogoutUser()
+  const shouldFetch = !accessToken || tokenService.isExpired(accessToken)
+  const { data, isLoading, isSuccess, isError } = useVerifyUser(
+    { credentials: 'include' },
+    { enabled: shouldFetch }
+  )
 
-  const logout = useCallback(async () => {
-    let serverLogoutSuccessful = false
+  useEffect(() => {
+    setGlobalState(prev => ({ ...prev, isLoading }))
+  }, [isLoading, setGlobalState])
 
-    try {
-      const response = await logoutUser(null)
-      if (response.status === 200) {
-        serverLogoutSuccessful = true
-      } else {
-        console.error(
-          `Server logout failed with status: ${response.status}. Proceeding with local cleanup.`
-        )
-        // You might want to extract an error message from response.data or response.text()
-        // For example: const errorData = await response.json(); console.error(errorData.message);
+  useEffect(() => {
+    const updateToken = async () => {
+      if (isSuccess && data.status === 200) {
+        setAuthState(prev => ({
+          ...prev,
+          user: data.data.data,
+          isAuthenticated: true
+        }))
       }
-    } catch (error) {
-      console.error('Error during server logout API call:', error)
     }
+    void updateToken()
+  }, [isSuccess, data])
+  console.log(isError)
 
-    try {
-      const tokenKey = globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
-      if (tokenKey) {
-        const cleared = await clearLocalForage(tokenKey)
-        if (!cleared) {
-          console.warn(
-            'Failed to clear token from localForage, but proceeding to update auth state.'
-          )
-        }
-      } else {
-        console.warn('Local forage token key is not defined. Skipping clear.')
-      }
-    } catch (error) {
-      console.error('Error clearing local forage during logout:', error)
-    }
+  // useEffect(() => {
+  //   if (isError && !isLoading) {
+  //     setAuthState({
+  //       isAuthenticated: false,
+  //       user: null
+  //     })
+  //     tokenService.clear()
+  //   }
+  // }, [isError, isLoading])
 
-    setAuthState({
-      user: null,
-      authenticated: false
-    })
-
-    if (!serverLogoutSuccessful) {
-      console.warn(
-        'Client-side logout complete, but server logout may have encountered issues.'
-      )
-    } else {
-      console.log('Logout process fully completed.')
-    }
-  }, [
-    logoutUser,
-    globalState.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
-    setAuthState
-  ])
-
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({
       authState,
-      setAuthState,
-      isVerifying,
-      logout
+      setAuthState
     }),
-    [authState, setAuthState, isVerifying, logout]
+    [authState, setAuthState]
   )
 
   return (

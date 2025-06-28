@@ -5,6 +5,18 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+             script-src 'self' 'unsafe-eval' https://cdn.example.com;
+             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+             img-src 'self' data: https://*.example-cdn.com;
+             font-src 'self' https://fonts.gstatic.com;
+             connect-src 'self' https://api.example.com https://analytics.example.com;
+             frame-ancestors 'none';
+             object-src 'none';
+             base-uri 'self'"
+    />
     <title>to-do-list</title>
   </head>
   <body>

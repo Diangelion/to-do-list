@@ -26,8 +26,8 @@ const Login = () => {
   }
 
   return (
-    <div className='Login__Page flex items-center w-full h-[100dvh] justify-center'>
-      <div className='Login__Page__Container h-[50dvh] p-10 w-3/4'>
+    <div className='Login__Page flex h-[100dvh] w-full items-center justify-center'>
+      <div className='Login__Page__Container h-[50dvh] w-3/4 p-10'>
         <div className='Login_Page__Header text-center'>
           <TypeAnimation
             cursor
@@ -38,10 +38,10 @@ const Login = () => {
           />
           <p>Organize your todos from anywhere and anytime with to-do-list.</p>
         </div>
-        <hr className='border-t-8 mx-auto my-6' />
+        <hr className='mx-auto my-6 border-t-8' />
         <div className='Login__Page__Form text-center'>
           <h2>Sign in with</h2>
-          <div className='Login__Page__Option flex justify-center gap-x-2 mt-6'>
+          <div className='Login__Page__Option mt-6 flex justify-center gap-x-2'>
             <Button onClick={() => login()}>
               <img src={GoogleIcon} alt='Google Icon' width={20} />
               Google
@@ -50,10 +50,6 @@ const Login = () => {
               <img src={GitHubIcon} alt='GitHub Icon' width={20} />
               GitHub
             </Button>
-            {/* <Button>
-              <img src={LinkedinIcon} alt="Linkedin Icon" width={20} />
-              Linkedin
-            </Button> */}
           </div>
         </div>
       </div>

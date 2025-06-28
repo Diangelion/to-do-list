@@ -1,4 +1,4 @@
-import type React from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 export interface TodoState {
   selectedDate: string
@@ -8,7 +8,7 @@ export interface TodoState {
 
 export interface TodoContextValue {
   todoState: TodoState
-  setTodoState: React.Dispatch<React.SetStateAction<TodoState>>
+  setTodoState: Dispatch<SetStateAction<TodoState>>
 }
 
 type TodoStatus = 0 | 1 | 2
