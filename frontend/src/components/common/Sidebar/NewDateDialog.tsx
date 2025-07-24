@@ -27,6 +27,11 @@ const NewDateDialog = () => {
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date | undefined>(undefined)
 
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate)
+    setOpen(false)
+  }
+
   return (
     <Dialog>
       <form>
@@ -36,18 +41,14 @@ const NewDateDialog = () => {
             title='Create New Todos'
           >
             <div className='flex items-center gap-x-3 px-5 py-2'>
-              <CirclePlus
-                width={20}
-                height={20}
-                className='text-secondary-foreground'
-              />{' '}
+              <CirclePlus width={20} height={20} />{' '}
               <p className='text-sm'>New Date</p>
             </div>
           </div>
         </DialogTrigger>
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
-            <DialogTitle>Add new date.</DialogTitle>
+            <DialogTitle>Add new date</DialogTitle>
             <DialogDescription>
               Create a new date entry to organize your todos. Once added, you
               can start adding tasks under this date.
@@ -77,11 +78,7 @@ const NewDateDialog = () => {
                   mode='single'
                   selected={date}
                   captionLayout='dropdown'
-                  onSelect={date => {
-                    setDate(date)
-                    setOpen(false)
-                  }}
-                  className='[[data-slot=popover-content]_&]:bg-primary'
+                  onSelect={handleDateSelect}
                 />
               </PopoverContent>
             </Popover>

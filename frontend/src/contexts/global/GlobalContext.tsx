@@ -17,26 +17,6 @@ const initializeEnv = (): ImportMetaEnv => {
     return String(value)
   }
 
-  // const getEnvNumber = (
-  //   // eslint-disable-next-line no-undef
-  //   key: keyof ImportMetaEnv,
-  //   defaultValue?: number
-  // ): number => {
-  //   const value = import.meta.env[String(key)]
-  //   if (value === undefined) {
-  //     if (defaultValue !== undefined) return defaultValue
-  //     throw new Error(`Missing environment variable: ${String(key)}`)
-  //   }
-  //   const num = parseInt(String(value), 10)
-  //   if (isNaN(num)) {
-  //     if (defaultValue !== undefined) return defaultValue
-  //     throw new Error(
-  //       `Invalid number for environment variable ${String(key)}: ${value}`
-  //     )
-  //   }
-  //   return num
-  // }
-
   return {
     VITE_BASE_URL_API: getEnvVar('VITE_BASE_URL_API'),
     VITE_GOOGLE_CLIENT_ID: getEnvVar('VITE_GOOGLE_CLIENT_ID'),
@@ -48,6 +28,7 @@ const initializeEnv = (): ImportMetaEnv => {
     VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY: getEnvVar(
       'VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY'
     ),
+    VITE_LOCAL_STORAGE_THEME_KEY: getEnvVar('VITE_LOCAL_STORAGE_THEME_KEY'),
     VITE_ENCRYPTION_KEY: getEnvVar('VITE_ENCRYPTION_KEY'),
 
     BASE_URL: getEnvVar('BASE_URL', '/'),

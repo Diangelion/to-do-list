@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/jsx-no-constructed-context-values */
 /* eslint-disable @typescript-eslint/consistent-type-imports */

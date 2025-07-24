@@ -15,7 +15,7 @@ import { Fragment } from 'react'
 
 const SidebarContentChildren = () => {
   const { todoState, setTodoState } = useTodo()
-  // Menu items.
+
   const items = [
     {
       title: '24-06-2025',
@@ -36,6 +36,51 @@ const SidebarContentChildren = () => {
       title: '21-06-2025',
       url: '#',
       icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
+    },
+    {
+      title: '21-06-2025',
+      url: '#',
+      icon: Calendar
     }
   ]
 
@@ -44,7 +89,7 @@ const SidebarContentChildren = () => {
       <SidebarGroupLabel className='text-md'>Todos</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          <ScrollArea className='shadow-inset-b-sm h-[19rem] whitespace-nowrap'>
+          <ScrollArea className='h-[19rem] whitespace-nowrap'>
             {items.map((item, i) => (
               <Fragment key={`${item.title}-${i}`}>
                 <SidebarMenuItem

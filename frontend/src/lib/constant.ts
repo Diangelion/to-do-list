@@ -1,3 +1,5 @@
+export const colorScheme = '(prefers-color-scheme: dark)'
+
 export const loginTypingSequence = [
   '',
   500,

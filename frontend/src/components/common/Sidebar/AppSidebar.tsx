@@ -10,7 +10,7 @@ import SidebarHeaderChildren from './SidebarHeaderChildren'
 
 const AppSidebar = () => {
   return (
-    <Sidebar className='bg-sidebar py-8'>
+    <Sidebar>
       <SidebarHeader className='h-[20%]'>
         <SidebarHeaderChildren />
       </SidebarHeader>

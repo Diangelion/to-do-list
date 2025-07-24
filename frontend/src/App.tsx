@@ -9,14 +9,14 @@ import Home from './pages/Home'
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <GlobalProvider>
+      <GlobalProvider>
+        <ThemeProvider>
           <AuthProvider>
             {/* <AppRouter /> */}
             <Home />
           </AuthProvider>
-        </GlobalProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </GlobalProvider>
     </QueryClientProvider>
   )
 }
