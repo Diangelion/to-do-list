@@ -7,7 +7,7 @@ import TodoProvider from '@/contexts/todo/TodoContext'
 const Home = () => {
   return (
     <TodoProvider>
-      <SidebarProvider>
+      <SidebarProvider className='bg-background'>
         <AppSidebar />
         <main className='bg-background h-[100dvh] p-4 md:mx-auto md:w-[80dvw]'>
           <div className='flex h-[3rem] items-center justify-between'>

@@ -41,8 +41,8 @@
   --popover-foreground: oklch(0 0 0);
 
   /* Border & Input */
-  --border: oklch(1 0 0);
-  --input: oklch(1 0 0);
+  --border: oklch(0.8555 0.0404 127.61); /* Same as secondary */
+  --input: oklch(0.8555 0.0404 127.61); /* Same as secondary */
 
   /* Ring (Focus) */
   --ring: oklch(0.9638 0.0299 92.32); /* Same as primary */
@@ -97,8 +97,8 @@
   --popover: oklch(0.2 0.015 240);
   --popover-foreground: oklch(0.95 0.01 0);
 
-  --border: oklch(0 0 1);
-  --input: oklch(0 0 1);
+  --border: oklch(0.3979 0 0); /* Same as secondary */
+  --input: oklch(0.3979 0 0); /* Same as secondary */
 
   --ring: oklch(0.5082 0.1565 20.19);
 

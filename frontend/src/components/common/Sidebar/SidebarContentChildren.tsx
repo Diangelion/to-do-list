@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sidebar'
 import useTodo from '@/contexts/todo/useTodo'
 import { cn } from '@/lib/utils'
-import { Calendar } from 'lucide-react'
+import { Calendar, Trash2 } from 'lucide-react'
 import { Fragment } from 'react'
 
 const SidebarContentChildren = () => {
@@ -105,9 +105,10 @@ const SidebarContentChildren = () => {
                   }
                 >
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <a href={item.url} className='flex'>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span className='mr-auto'>{item.title}</span>
+                      <Trash2 />
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

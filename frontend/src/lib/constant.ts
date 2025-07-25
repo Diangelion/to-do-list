@@ -37,3 +37,9 @@ export const tabChoices = [
   { value: 'progress', label: 'On Progress' },
   { value: 'done', label: 'Done' }
 ]
+
+export const activityStatus = [
+  { value: -1, label: 'To Do' },
+  { value: 0, label: 'On Progress' },
+  { value: 1, label: 'Done' }
+]
