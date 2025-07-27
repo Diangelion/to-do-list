@@ -1,12 +1,12 @@
 import httpx
 from fastapi import APIRouter, status
-from app.schemas.oauth_schema import OAuth
-from app.schemas.user_schema import UserCreate
+from app.schemas.oauth_schema import SchemaOAuth
+from app.schemas.user_schema import SchemaUserCreate
 from app.settings import settings
 
 router = APIRouter()
 
-async def main_oauth(oauth: OAuth) -> UserCreate:
+async def main_oauth(oauth: SchemaOAuth) -> SchemaUserCreate:
   match oauth.provider:
     case 'google':
       return await auth_google(oauth.token)
@@ -15,7 +15,7 @@ async def main_oauth(oauth: OAuth) -> UserCreate:
     case _:
       raise ValueError("Unsupported OAuth provider")
 
-async def auth_google(token: str) -> UserCreate:
+async def auth_google(token: str) -> SchemaUserCreate:
   token_data = {
     'code': token,
     'client_id': settings.google_client_id,
@@ -54,7 +54,7 @@ async def auth_google(token: str) -> UserCreate:
       error_message = f'Google OAuth token exchange failed: {error_detail}'
 
     user_info = user_response.json()
-    user = UserCreate(
+    user = SchemaUserCreate(
       email=user_info.get('email'),
       name=user_info.get('name'),
       profile_picture=user_info.get('picture')
@@ -62,7 +62,7 @@ async def auth_google(token: str) -> UserCreate:
     )
     return user
 
-async def auth_github(token: str) -> UserCreate:
+async def auth_github(token: str) -> SchemaUserCreate:
   token_data = {
     'code': token,
     'client_id': settings.github_client_id,
@@ -105,7 +105,7 @@ async def auth_github(token: str) -> UserCreate:
       error_message = f'Google OAuth token exchange failed: {error_detail}'
 
     user_info = user_response.json()
-    user = UserCreate(
+    user = SchemaUserCreate(
       email=user_info.get('email') | '',
       name=user_info.get('login'),
       profile_picture=user_info.get('avatar_url')

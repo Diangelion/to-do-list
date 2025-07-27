@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 from jose import JWTError, jwt
-from app.schemas.jwt_schema import TokenData
+from app.schemas.jwt_schema import SchemaTokenData
 from app.settings import settings
 
 def create_payload(user_id: str, expire: datetime, token_type: str) -> dict[str, Any]:
@@ -27,7 +27,7 @@ def create_refresh_token(user_id: str) -> tuple[str, timedelta]:
 def verify_token(
   token: str,
   options: Optional[dict[str, Any] | None] = None
-) -> TokenData:
+) -> SchemaTokenData:
   payload = jwt.decode(
     token,
     settings.jwt_secret_key,
@@ -42,4 +42,4 @@ def verify_token(
   if token_type not in ['access', 'refresh']:
     raise JWTError("Invalid token type.")
 
-  return TokenData(user_id=user_id, token_type=token_type)
+  return SchemaTokenData(user_id=user_id, token_type=token_type)

@@ -5,7 +5,7 @@ from typing import Callable, Awaitable
 from fastapi import FastAPI, APIRouter, status, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from redis import Redis
-from app.utils.response_utils import json_res
+from app.utils.response_utils import json_response
 from app.middleware.jwt_middleware import jwt_middleware
 from app.database import engine, Base
 from app.api import user_api
@@ -87,7 +87,7 @@ async def generic_exception_handler(request: Request, exc: Exception):
   error_message = "An unexpected internal server error occurred. Please try again later."
   if app.debug:
     error_message = f"Internal Server Error: {type(exc).__name__} - {str(exc)}"
-  return json_res(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
+  return json_response(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
 
 def debug_cors_settings():
     """Debug function to print CORS settings"""

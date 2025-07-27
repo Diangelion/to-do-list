@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from app.database import Base
 
-class User(Base):
+class ModelUser(Base):
   __tablename__ = 'users'
 
   id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
@@ -21,19 +21,3 @@ class User(Base):
     onupdate=func.now(),
     nullable=False
   )
-
-  # credential = relationship(
-  #   "UserCredential",
-  #   back_populates="user",
-  #   uselist=False, # Makes this a scalar attribute (one-to-one)
-  #   cascade="all, delete-orphan" #If a User is deleted, their credential is also deleted.
-  # )
-
-# class UserCredential(Base):
-#   __tablename__ = 'user_credentials'
-
-#   id = Column(UUID(as_uuid=True), primary_key=True)
-#   user_id = Column(String(100), nullable=False, index=True)
-#   refresh_token = Column(String(255), ForeignKey('users.id'), unique=True, nullable=False)
-
-#   user = relationship("user", back_populates="credential")

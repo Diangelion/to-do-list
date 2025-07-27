@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class OAuth(BaseModel):
+class SchemaOAuth(BaseModel):
   token: str
   provider: str

@@ -2,7 +2,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, Any
 
-def json_res(
+def json_response(
   status_code: int,
   success: bool,
   message: str,
