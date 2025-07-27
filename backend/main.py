@@ -8,7 +8,7 @@ from redis import Redis
 from app.utils.response_utils import json_response
 from app.middleware.jwt_middleware import jwt_middleware
 from app.database import engine, Base
-from app.api import user_api
+from app.api import user_api, todo_api
 from app.settings import settings
 from app.log.log_config import setup_logging
 
@@ -21,6 +21,7 @@ api_router = APIRouter(prefix=settings.api_prefix)
 
 # Routers
 api_router.include_router(user_api.router, prefix='/users', tags=['users'])
+api_router.include_router(todo_api.router, prefix='/todo', tags=['todo'])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

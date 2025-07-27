@@ -80,7 +80,7 @@ export const useFetchMutation = <TData, TVariables>(
 // Custom hook for PUT mutations
 export const useFetchUpdateMutation = <TData, TVariables>(
   endpoint: string,
-  invalidateQueryKey: string,
+  invalidateQueryKey: string | null,
   mutationOptions?: UseMutationOptions<
     ApiResponse<BackendCustomResponse<TData>>,
     ApiError,
@@ -100,30 +100,47 @@ export const useFetchUpdateMutation = <TData, TVariables>(
 
   return useMutation(
     createMutationOptions(mutationFn, {
-      onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+      onSuccess: () => {
+        if (invalidateQueryKey) {
+          return queryClient.invalidateQueries({
+            queryKey: [invalidateQueryKey]
+          })
+        }
+        return undefined
+      },
       ...mutationOptions
     })
   )
 }
 
 // Custom hook for DELETE mutations
-export const useFetchDeleteMutation = <T>(
+export const useFetchDeleteMutation = <TData, TVariables>(
   endpoint: string,
-  invalidateQueryKey: string,
+  invalidateQueryKey: string | null,
   mutationOptions?: UseMutationOptions<
-    ApiResponse<BackendCustomResponse<T>>,
-    ApiError
+    ApiResponse<BackendCustomResponse<TData>>,
+    ApiError,
+    TVariables
   >
-) => {
+): UseMutationResult<
+  ApiResponse<BackendCustomResponse<TData>>,
+  ApiError,
+  TVariables
+> => {
   const queryClient = useQueryClient()
 
-  const mutationFn = useCallback(() => del<T>(endpoint), [endpoint])
+  const mutationFn = useCallback(() => del<TData>(endpoint), [endpoint])
 
   return useMutation(
     createMutationOptions(mutationFn, {
-      onSuccess: () =>
-        queryClient.invalidateQueries({ queryKey: [invalidateQueryKey] }),
+      onSuccess: () => {
+        if (invalidateQueryKey) {
+          return queryClient.invalidateQueries({
+            queryKey: [invalidateQueryKey]
+          })
+        }
+        return undefined
+      },
       ...mutationOptions
     })
   )
