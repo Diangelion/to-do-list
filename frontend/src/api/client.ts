@@ -22,7 +22,7 @@ const apiRequest = async <T>(
   const url = `${baseURL}${endpoint}`
   const timeoutSignal = createTimeoutSignal(timeout)
   const combinedSignal = combineSignals(signal, timeoutSignal)
-  const accessToken = await tokenService.ensureFreshToken()
+  const accessToken = await tokenService.fresh()
 
   const requestOptions: RequestInit = {
     ...fetchOptions,

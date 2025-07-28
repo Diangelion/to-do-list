@@ -3,7 +3,7 @@ import { Navigate } from 'react-router'
 
 const RootRouter = () => {
   const { authState } = useAuth()
-  return authState.isAuthenticated ? (
+  return authState.authenticated ? (
     <Navigate to='/home' replace />
   ) : (
     <Navigate to='/login' replace />

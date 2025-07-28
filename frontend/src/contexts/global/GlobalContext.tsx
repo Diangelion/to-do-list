@@ -29,7 +29,6 @@ const initializeEnv = (): ImportMetaEnv => {
       'VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY'
     ),
     VITE_LOCAL_STORAGE_THEME_KEY: getEnvVar('VITE_LOCAL_STORAGE_THEME_KEY'),
-    VITE_ENCRYPTION_KEY: getEnvVar('VITE_ENCRYPTION_KEY'),
 
     BASE_URL: getEnvVar('BASE_URL', '/'),
     MODE: getEnvVar('MODE', 'development'),

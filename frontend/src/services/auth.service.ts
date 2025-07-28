@@ -35,7 +35,7 @@ export const useVerifyUser = (
   >
 ) => {
   return useFetchQuery<User>(
-    '/users/profile',
+    '/users/verify',
     ['users'],
     fetchOptions,
     queryOptions

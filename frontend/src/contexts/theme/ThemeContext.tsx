@@ -1,16 +1,19 @@
-import { colorScheme } from '@/lib/constant'
+import todoListConfig from '@/config/todo-list.config'
+import useGlobal from '@/contexts/global/useGlobal'
+import {
+  initialContextValue,
+  ThemeContext
+} from '@/contexts/theme/theme.context'
 import { get, store } from '@/lib/localStorage.utils'
 import type { ThemeState } from '@/types/theme.context.types'
 import {
-  type FC,
-  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  type FC,
+  type ReactNode
 } from 'react'
-import useGlobal from '../global/useGlobal'
-import { initialContextValue, ThemeContext } from './theme.context'
 
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { globalState } = useGlobal()
@@ -20,42 +23,39 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     initialContextValue.themeState
   )
 
-  const addDarkTheme = () =>
-    document.documentElement.setAttribute('data-theme', 'dark')
-  const removeDarkTheme = () =>
-    document.documentElement.removeAttribute('data-theme')
-
-  const processTheme = useCallback(
-    (theme: string) => {
-      if (theme === 'dark') addDarkTheme()
-      else removeDarkTheme()
+  const applyTheme = useCallback(
+    (theme: 'light' | 'dark') => {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark')
+      } else {
+        document.documentElement.removeAttribute('data-theme')
+      }
       store(themeKey, theme)
     },
     [themeKey]
   )
 
   useEffect(() => {
+    const prefersDark = window.matchMedia(todoListConfig.COLOR_SCHEME).matches
     const savedTheme = get(themeKey) as 'light' | 'dark' | null
 
-    const prefersDark = window.matchMedia(colorScheme).matches
-    const theme = savedTheme ?? (prefersDark ? 'dark' : 'light')
-
-    processTheme(theme)
+    const theme: 'light' | 'dark' =
+      savedTheme ?? (prefersDark ? 'dark' : 'light')
     setThemeState(prev => ({ ...prev, theme }))
-  }, [themeKey, setThemeState, processTheme])
+    applyTheme(theme)
+  }, [applyTheme, themeKey])
 
   const toggleTheme = useCallback(() => {
     setThemeState(prev => {
-      const prevTheme = prev.theme
-      const nextTheme = prevTheme === 'light' ? 'dark' : 'light'
-      processTheme(nextTheme)
+      const nextTheme = prev.theme === 'light' ? 'dark' : 'light'
+      applyTheme(nextTheme)
       return { ...prev, theme: nextTheme }
     })
-  }, [setThemeState, processTheme])
+  }, [applyTheme])
 
   const contextValue = useMemo(
     () => ({ themeState, setThemeState, toggleTheme }),
-    [themeState, setThemeState, toggleTheme]
+    [themeState, toggleTheme]
   )
 
   return (

@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { activityStatus } from '@/lib/constant'
+import todoListConfig from '@/config/todo-list.config'
 import { Plus } from 'lucide-react'
 
 const NewToDoDialog = () => {
@@ -65,7 +65,7 @@ const NewToDoDialog = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {activityStatus.map(({ value, label }) => (
+                  {todoListConfig.ACTIVITY_STATUS.map(({ value, label }) => (
                     <SelectItem key={label} value={`${value}`}>
                       {label}
                     </SelectItem>

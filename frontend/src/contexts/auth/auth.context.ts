@@ -3,11 +3,19 @@ import type { AuthContextValue } from '../../types/auth.context.types'
 
 export const initialContextValue: AuthContextValue = {
   authState: {
-    user: null,
-    isAuthenticated: false
+    authenticated: false
   },
   setAuthState: () => {
     throw new Error('setAuthState function must be implemented')
+  },
+  googleLogin: () => {
+    throw new Error('googleLogin function must be implemented')
+  },
+  githubLogin: () => {
+    throw new Error('githubLogin function must be implemented')
+  },
+  logout: () => {
+    throw new Error('logout function must be implemented')
   }
 }
 

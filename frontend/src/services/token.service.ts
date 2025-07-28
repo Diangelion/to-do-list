@@ -1,67 +1,80 @@
-import { refreshAccessToken } from '@/api/client'
-import { clear, get, store } from '@/lib/localForage.utils'
-import type { StoredItem } from '@/types/browser.storage.types'
-import CryptoJS from 'crypto-js'
+import { post } from '@/api/client'
+import type { CreateUserResponse } from '@/types/auth.api.types'
+import type { DecodedAuthToken, TokenService } from '@/types/token.types'
 import { jwtDecode } from 'jwt-decode'
+import { indexedDBStorage } from './browser.storage.services'
 
-const ENCRYPTION_KEY = import.meta.env.VITE_ENCRYPTION_KEY
-const ACCESS_TOKEN_KEY = import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY
+export const tokenService: TokenService = {
+  // Variables
+  accessTokenKey: import.meta.env.VITE_LOCAL_FORAGE_accessTokenKey,
+  fetchOptions: { credentials: 'include' },
+  pendingRefresh: null,
+  storage: indexedDBStorage,
 
-const encrypt = (token: string) =>
-  CryptoJS.AES.encrypt(token, ENCRYPTION_KEY).toString()
+  // Functions
+  set: (token: string) =>
+    tokenService.storage.set(tokenService.accessTokenKey, token),
+  get: async () => await tokenService.storage.get(tokenService.accessTokenKey),
+  remove: (token: string) => tokenService.storage.remove(token),
+  clear: () => tokenService.storage.remove(tokenService.accessTokenKey),
+  expired: (token: string): boolean => {
+    const decodedToken: DecodedAuthToken = tokenService.decode(token)
+    if (!decodedToken) return true
 
-const decrypt = (cipher: string) =>
-  CryptoJS.AES.decrypt(cipher, ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8)
-
-let refreshInProgress = false
-let pendingRefresh: Promise<string | null> | null = null
-
-export const tokenService = {
-  async set(token: string) {
-    const encrypted = encrypt(token)
-    await store(ACCESS_TOKEN_KEY, encrypted)
+    // Add 30-second buffer to handle clock skew
+    const currentTime = Math.floor(Date.now() / 1000)
+    return decodedToken.exp < currentTime + 30
   },
+  refresh: async (): Promise<string | null> => {
+    try {
+      const response = await post<CreateUserResponse>(
+        '/user/refresh',
+        null,
+        tokenService.fetchOptions
+      )
 
-  async get(): Promise<StoredItem | null> {
-    const token: StoredItem | null = await get(ACCESS_TOKEN_KEY)
-    return token ? { ...token, value: decrypt(token.value) } : null
-  },
+      // Handle error
+      if (response.status !== 200) throw new Error('Refresh failed')
 
-  async clear() {
-    await clear(ACCESS_TOKEN_KEY)
-  },
+      // Get token and handle if empty
+      const newToken = response.data.data.access_token
+      if (!newToken) throw new Error('No token in response')
 
-  isExpired(token: string): boolean {
-    const { exp }: { exp: number } = jwtDecode(token)
-    const now = Math.floor(Date.now() / 1000)
-    return exp < now
-  },
-
-  expiringSoon(token: string, bufferSeconds = 30): boolean {
-    const { exp }: { exp: number } = jwtDecode(token)
-    const now = Math.floor(Date.now() / 1000)
-    return exp - now < bufferSeconds
-  },
-
-  async ensureFreshToken(): Promise<string | null> {
-    const stored = await tokenService.get()
-    const isExpired = stored && tokenService.isExpired(stored.value)
-
-    if (!stored || !stored.value || isExpired) {
-      if (refreshInProgress && pendingRefresh) {
-        return pendingRefresh
-      }
-
-      refreshInProgress = true
-      pendingRefresh = refreshAccessToken()
-
-      const newToken = await pendingRefresh
-      refreshInProgress = false
-      pendingRefresh = null
-
+      // Renew token
+      await tokenService.set(newToken)
       return newToken
+    } catch (error) {
+      await tokenService.clear()
+      throw error
+    }
+  },
+  fresh: async (): Promise<string | null> => {
+    // Get existing
+    const storedToken = await tokenService.get()
+    if (!storedToken) return null
+
+    // Check if still valid
+    if (!tokenService.expired(storedToken)) return storedToken
+
+    // Handle expiration token
+    if (!tokenService.pendingRefresh) {
+      tokenService.pendingRefresh = tokenService.refresh().finally(() => {
+        tokenService.pendingRefresh = null
+      })
     }
 
-    return stored.value
+    return await tokenService.pendingRefresh
+  },
+  decode: (token: string): DecodedAuthToken => jwtDecode(token),
+  tokenInfo: (
+    token: string
+  ): Pick<DecodedAuthToken, 'sub' | 'email'> | null => {
+    const decoded = tokenService.decode(token)
+    if (!decoded) return null
+
+    return {
+      sub: decoded.sub,
+      email: decoded.email
+    }
   }
 }

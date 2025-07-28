@@ -25,4 +25,4 @@ class ModelActivities(Base):
   created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
   updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-  activity_date = relationship('ModelActivityDate', back_populates='activities', passive_delete=True)
+  activity_date = relationship('ModelActivityDate', back_populates='activities', passive_deletes=True)

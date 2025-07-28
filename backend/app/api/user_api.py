@@ -24,6 +24,18 @@ async def api_login(
   login_data: dict[str, str] = service_authenticate_user(oauth_user, db, redis_client)
   return json_response(status.HTTP_200_OK, True, 'Login success,', login_data)
 
+@router.get('/verify', response_model=SchemaUserCreate, status_code=status.HTTP_200_OK)
+def api_verify(
+  request: Request,
+  db: Session = Depends(get_db),
+  redis_client: Redis = Depends(get_redis_client)
+) -> JSONResponse:
+  user_id = request.state.user.user_id
+  user = service_get_profile(user_id, db)
+  if not user:
+    return json_response(status.HTTP_401_UNAUTHORIZED, False, 'Unauthorized')
+  return json_response(status.HTTP_200_OK, True, 'User verified', user)
+
 @router.get('/profile', response_model=SchemaUserCreate, status_code=status.HTTP_200_OK)
 def api_profile(
   request: Request,

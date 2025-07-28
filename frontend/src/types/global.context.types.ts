@@ -3,7 +3,7 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react'
 export interface GlobalState {
   // eslint-disable-next-line no-undef
   env: Partial<ImportMetaEnv>
-  isLoading: boolean
+  loading: boolean
 }
 
 export interface GlobalContextValue {

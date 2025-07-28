@@ -1,4 +1,5 @@
-import { propagateLoaderColor, propagateTypingSequence } from '@/lib/constant'
+import todoListConfig from '@/config/todo-list.config'
+import useTheme from '@/contexts/theme/useTheme'
 import { useCreateUser } from '@/services/auth.service'
 import { tokenService } from '@/services/token.service'
 import { useEffect } from 'react'
@@ -7,6 +8,11 @@ import { PropagateLoader } from 'react-spinners'
 import { TypeAnimation } from 'react-type-animation'
 
 const OAuth2 = () => {
+  const { themeState } = useTheme()
+  const propagateLoaderColor =
+    themeState.theme === 'light'
+      ? todoListConfig.PROPAGATE_LOADER_COLOR_LIGHT
+      : todoListConfig.PROPAGATE_LOADER_COLOR_DARK
   const navigate = useNavigate()
 
   const [searchParams] = useSearchParams()
@@ -33,14 +39,16 @@ const OAuth2 = () => {
   }, [code, provider, navigate, createUserLogin])
 
   return (
-    <div className='OAuth2_Page flex h-screen w-full flex-col items-center justify-center gap-y-10'>
-      <TypeAnimation
-        preRenderFirstString
-        sequence={propagateTypingSequence}
-        wrapper='h1'
-        cursor
-        repeat={Infinity}
-      />
+    <div className='bg-background flex h-[100dvh] w-[100dvw] flex-col items-center justify-center gap-y-10'>
+      <span className='text-4xl font-bold'>
+        <TypeAnimation
+          preRenderFirstString
+          sequence={todoListConfig.PROPAGATE_TYPING_SEQUENCE}
+          wrapper='h1'
+          repeat={Infinity}
+          omitDeletionAnimation
+        />
+      </span>
       <PropagateLoader
         color={propagateLoaderColor}
         aria-label='Loading Spinner'

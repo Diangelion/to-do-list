@@ -25,10 +25,9 @@ api_router.include_router(todo_api.router, prefix='/todo', tags=['todo'])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-  # Initialize PostgreSQL connection
+  # Initialize PostgreSQL connection, database, and tables
   Base.metadata.create_all(bind=engine)
 
-  # Initialize Redis connection
   # app.state.redis = Redis(
   #   host=settings.redis_host,
   #   port=settings.redis_port,
@@ -36,8 +35,10 @@ async def lifespan(app: FastAPI):
   #   password=settings.redis_password,
   #   decode_responses=True
   # )
+  # Initialize Redis connection
   app.state.redis = Redis.from_url(settings.redis_url, decode_responses=True) # type:ignore
 
+  # Verify Redis connection
   try:
     pong = app.state.redis.ping()  # type:ignore
     if pong != True:
@@ -91,7 +92,6 @@ async def generic_exception_handler(request: Request, exc: Exception):
   return json_response(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
 
 def debug_cors_settings():
-    """Debug function to print CORS settings"""
     print("=== CORS Settings Debug ===")
     print(f"CORS Origins: {settings.cors_origins}")
     print(f"CORS Methods: {settings.cors_methods}")
@@ -103,7 +103,7 @@ def debug_cors_settings():
 
 # Main
 if __name__ == '__main__':
-  debug_cors_settings()  # Add this line
+  debug_cors_settings()
   uvicorn.run(
     'main:app',
     host=settings.api_host,
