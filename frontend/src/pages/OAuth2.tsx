@@ -18,15 +18,20 @@ const OAuth2 = () => {
   const [searchParams] = useSearchParams()
   const code = searchParams.get('code')
 
-  const { provider } = useParams()
+  const { provider } = useParams<{ provider: 'google' | 'github' }>()
 
   const { mutate: createUserLogin } = useCreateUser(undefined, {
     onSuccess: async loginResponse => {
       if (loginResponse.status === 200) {
-        await tokenService
-          .set(loginResponse.data.data.access_token)
-          .then(() => void navigate('/home'))
-          .catch(() => void navigate('/'))
+        try {
+          await tokenService.set(loginResponse.data.data.token)
+          void navigate('/home')
+        } catch (error) {
+          console.error('createUserLogin | Failed to set token:', error)
+          void navigate('/')
+        }
+      } else {
+        void navigate('/')
       }
       return void navigate('/')
     },
@@ -34,7 +39,10 @@ const OAuth2 = () => {
   })
 
   useEffect(() => {
-    if (!provider || !code) return void navigate('/')
+    if (!provider || !code) {
+      void navigate('/')
+      return
+    }
     createUserLogin({ token: code, provider })
   }, [code, provider, navigate, createUserLogin])
 

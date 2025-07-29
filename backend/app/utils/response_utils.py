@@ -6,13 +6,15 @@ def json_response(
   status_code: int,
   success: bool,
   message: str,
-  data: Optional[Any] = None
+  data: Optional[Any] = None,
+  headers: Optional[Any] = None
 ) -> JSONResponse:
   content: dict[str, Any] = {"success": success, "message": message}
+
   if data is not None:
     if isinstance(data, BaseModel):
       content["data"] = data.model_dump()
     else:
       content["data"] = data
 
-  return JSONResponse(status_code=status_code, content=content)
+  return JSONResponse(status_code=status_code, content=content, headers=headers)

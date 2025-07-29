@@ -13,7 +13,7 @@ export const cookieStorage: StorageService = {
       Cookies.set(key, JSON.stringify(value), options)
       return true
     } catch (error) {
-      console.error('Cookie set error:', error)
+      console.error('cookieStorage | Cookie set error:', error)
       return false
     }
   },
@@ -22,7 +22,7 @@ export const cookieStorage: StorageService = {
       const value = Cookies.get(key)
       return value ? JSON.parse(value) : null
     } catch (error) {
-      console.error('Cookie get error:', error)
+      console.error('cookieStorage | Cookie get error:', error)
       return null
     }
   },
@@ -31,7 +31,7 @@ export const cookieStorage: StorageService = {
       Cookies.remove(key)
       return true
     } catch (error) {
-      console.error('Cookie remove error:', error)
+      console.error('cookieStorage | Cookie remove error:', error)
       return false
     }
   },
@@ -41,7 +41,7 @@ export const cookieStorage: StorageService = {
       Object.keys(allCookies).forEach(cookie => Cookies.remove(cookie))
       return true
     } catch (error) {
-      console.error('Cookie clear error:', error)
+      console.error('cookieStorage | Cookie clear error:', error)
       return false
     }
   }
@@ -54,7 +54,7 @@ export const localStorage: StorageService = {
       window.localStorage.setItem(key, JSON.stringify(value))
       return true
     } catch (error) {
-      console.error('LocalStorage set error:', error)
+      console.error('localStorage | LocalStorage set error:', error)
       return false
     }
   },
@@ -63,7 +63,7 @@ export const localStorage: StorageService = {
       const value = window.localStorage.getItem(key)
       return value ? JSON.parse(value) : null
     } catch (error) {
-      console.error('LocalStorage get error:', error)
+      console.error('localStorage | LocalStorage get error:', error)
       return null
     }
   },
@@ -72,7 +72,7 @@ export const localStorage: StorageService = {
       window.localStorage.removeItem(key)
       return true
     } catch (error) {
-      console.error('LocalStorage remove error:', error)
+      console.error('localStorage | LocalStorage remove error:', error)
       return false
     }
   },
@@ -81,7 +81,7 @@ export const localStorage: StorageService = {
       window.localStorage.clear()
       return true
     } catch (error) {
-      console.error('LocalStorage clear error:', error)
+      console.error('localStorage | LocalStorage clear error:', error)
       return false
     }
   }
@@ -94,7 +94,7 @@ export const sessionStorage: StorageService = {
       window.sessionStorage.setItem(key, JSON.stringify(value))
       return true
     } catch (error) {
-      console.error('SessionStorage set error:', error)
+      console.error('sessionStorage | SessionStorage set error:', error)
       return false
     }
   },
@@ -103,7 +103,7 @@ export const sessionStorage: StorageService = {
       const value = window.sessionStorage.getItem(key)
       return value ? JSON.parse(value) : null
     } catch (error) {
-      console.error('SessionStorage get error:', error)
+      console.error('sessionStorage | SessionStorage get error:', error)
       return null
     }
   },
@@ -112,7 +112,7 @@ export const sessionStorage: StorageService = {
       window.sessionStorage.removeItem(key)
       return true
     } catch (error) {
-      console.error('SessionStorage remove error:', error)
+      console.error('sessionStorage | SessionStorage remove error:', error)
       return false
     }
   },
@@ -121,7 +121,7 @@ export const sessionStorage: StorageService = {
       window.sessionStorage.clear()
       return true
     } catch (error) {
-      console.error('SessionStorage clear error:', error)
+      console.error('sessionStorage | SessionStorage clear error:', error)
       return false
     }
   }
@@ -134,7 +134,7 @@ export const indexedDBStorage: StorageService = {
       await localforage.setItem(key, value)
       return true
     } catch (error) {
-      console.error('IndexedDB set error:', error)
+      console.error('indexedDBStorage | IndexedDB set error:', error)
       return false
     }
   },
@@ -142,7 +142,7 @@ export const indexedDBStorage: StorageService = {
     try {
       return await localforage.getItem(key)
     } catch (error) {
-      console.error('IndexedDB get error:', error)
+      console.error('indexedDBStorage | IndexedDB get error:', error)
       return null
     }
   },
@@ -151,7 +151,7 @@ export const indexedDBStorage: StorageService = {
       await localforage.removeItem(key)
       return true
     } catch (error) {
-      console.error('IndexedDB remove error:', error)
+      console.error('indexedDBStorage | IndexedDB remove error:', error)
       return false
     }
   },
@@ -160,7 +160,7 @@ export const indexedDBStorage: StorageService = {
       await localforage.clear()
       return true
     } catch (error) {
-      console.error('IndexedDB clear error:', error)
+      console.error('indexedDBStorage | IndexedDB clear error:', error)
       return false
     }
   }

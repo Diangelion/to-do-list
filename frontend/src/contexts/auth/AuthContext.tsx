@@ -13,9 +13,7 @@ import { AuthContext, initialContextValue } from './auth.context'
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const { setGlobalState } = useGlobal()
 
-  const [accessToken, setAccessToken] = useState<string | null | undefined>(
-    undefined
-  )
+  const [accessToken, setAccessToken] = useState<string | null>(null)
   const [authState, setAuthState] = useState<AuthState>(
     initialContextValue.authState
   )
@@ -32,11 +30,16 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, [setGlobalState])
 
   // Verify token if available and not expired
-  const isTokenReady = accessToken !== undefined
+  const isTokenReady = accessToken !== null
   const isTokenPresent = !!accessToken
   const isTokenValid = accessToken ? !tokenService.expired(accessToken) : false
 
   const shouldVerify = isTokenReady && isTokenPresent && isTokenValid
+
+  // Stop page loading if shouldVerify is false
+  useEffect(() => {
+    if (!shouldVerify) setGlobalState(prev => ({ ...prev, loading: false }))
+  }, [shouldVerify, setGlobalState])
 
   const {
     data: verifyData,
@@ -105,7 +108,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       setAuthState({ authenticated: false })
       setGlobalState(prev => ({ ...prev, user: null }))
     } catch (error) {
-      console.error('Logout failed:', error)
+      console.error('logout | Logout failed:', error)
     }
   }, [logoutUser, setGlobalState])
 

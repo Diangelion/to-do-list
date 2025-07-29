@@ -33,7 +33,7 @@ def service_get_or_create_user(oauth_user: SchemaUserCreate, db: Session) -> str
 
   return str(user.id)
 
-def service_authenticate_user(
+def service_login_user(
   oauth_user: SchemaUserCreate,
   db: Session,
   redis_client: Redis
@@ -44,10 +44,10 @@ def service_authenticate_user(
   store_refresh_token(user_id, refresh_token, lifetime, redis_client)
   return { 'access_token': access_token }
 
-def service_verify_user(
-  user_id: str,
-  db: Session
-) -> SchemaUserCreate | None:
+# def service_verify_user(
+#   user_id: str,
+#   db: Session
+# ) -> SchemaUserCreate | None:
 
 
 def service_get_profile(

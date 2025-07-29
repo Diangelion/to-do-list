@@ -4,7 +4,8 @@ import type { GlobalContextValue } from '../../types/global.context.types'
 export const initialContextValue: GlobalContextValue = {
   globalState: {
     env: {},
-    loading: false
+    loading: false,
+    user: null
   },
   setGlobalState: () => {
     throw new Error('setGlobalState function must be implemented')

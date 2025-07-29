@@ -30,7 +30,6 @@ async def auth_google(token: str) -> SchemaUserCreate:
       data=token_data,
       headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
-    print(f'Status code: {token_response.status_code}')
 
     if token_response.status_code != status.HTTP_200_OK:
       error_detail = token_response.json().get('error_description', 'Unknown error')
@@ -80,7 +79,6 @@ async def auth_github(token: str) -> SchemaUserCreate:
         'Accept-Encoding': 'application/json'
       }
     )
-    print(f'Status code: {token_response.status_code}')
 
     if token_response.status_code != status.HTTP_200_OK:
       error_detail = token_response.json().get('error_description', 'Unknown error')
@@ -88,7 +86,6 @@ async def auth_github(token: str) -> SchemaUserCreate:
       raise ConnectionError(error_message)
 
     token_json = token_response.json()
-    print(f"Token JSON: {token_json}")
     access_token = token_json.get('access_token')
 
     if not access_token:

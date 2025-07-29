@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from redis import Redis
 from app.schemas.oauth_schema import SchemaOAuth
 from app.schemas.user_schema import SchemaUserCreate
-from app.services.user_service import service_authenticate_user, service_get_profile
+from app.services.user_service import service_login_user, service_get_profile
 from app.utils.oauth_utils import main_oauth
 from app.utils.response_utils import json_response
 from app.utils.redis_utils import delete_refresh_token
@@ -19,11 +19,14 @@ async def api_login(
   redis_client: Redis = Depends(get_redis_client)
 ) -> JSONResponse:
   request_data = await request.json()
+
   oauth = SchemaOAuth(**request_data)
   oauth_user: SchemaUserCreate = await main_oauth(oauth)
-  login_data: dict[str, str] = service_authenticate_user(oauth_user, db, redis_client)
+
+  login_data: dict[str, str] = service_login_user(oauth_user, db, redis_client)
   return json_response(status.HTTP_200_OK, True, 'Login success,', login_data)
 
+# Handle user session (refresh token expired or not)
 @router.get('/verify', response_model=SchemaUserCreate, status_code=status.HTTP_200_OK)
 def api_verify(
   request: Request,

@@ -1,12 +1,12 @@
 import { post } from '@/api/client'
-import type { CreateUserResponse } from '@/types/auth.api.types'
+import type { LoginResponse } from '@/types/auth.api.types'
 import type { DecodedAuthToken, TokenService } from '@/types/token.types'
 import { jwtDecode } from 'jwt-decode'
 import { indexedDBStorage } from './browser.storage.services'
 
 export const tokenService: TokenService = {
   // Variables
-  accessTokenKey: import.meta.env.VITE_LOCAL_FORAGE_accessTokenKey,
+  accessTokenKey: import.meta.env.VITE_LOCAL_FORAGE_ACCESS_TOKEN_KEY,
   fetchOptions: { credentials: 'include' },
   pendingRefresh: null,
   storage: indexedDBStorage,
@@ -27,7 +27,7 @@ export const tokenService: TokenService = {
   },
   refresh: async (): Promise<string | null> => {
     try {
-      const response = await post<CreateUserResponse>(
+      const response = await post<LoginResponse>(
         '/user/refresh',
         null,
         tokenService.fetchOptions
@@ -37,7 +37,7 @@ export const tokenService: TokenService = {
       if (response.status !== 200) throw new Error('Refresh failed')
 
       // Get token and handle if empty
-      const newToken = response.data.data.access_token
+      const newToken = response.data.data.token
       if (!newToken) throw new Error('No token in response')
 
       // Renew token

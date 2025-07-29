@@ -1,9 +1,11 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
+import type { User } from './auth.context.types'
 
 export interface GlobalState {
   // eslint-disable-next-line no-undef
   env: Partial<ImportMetaEnv>
   loading: boolean
+  user: User | null
 }
 
 export interface GlobalContextValue {

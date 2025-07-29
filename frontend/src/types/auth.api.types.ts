@@ -1,8 +1,8 @@
-export interface CreateUserRequest {
+export interface LoginRequest {
   token: string
   provider: string
 }
 
-export interface CreateUserResponse {
-  access_token: string
+export interface LoginResponse {
+  token: string
 }

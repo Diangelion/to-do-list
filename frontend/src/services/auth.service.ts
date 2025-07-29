@@ -1,8 +1,5 @@
 import { useFetchMutation, useFetchQuery } from '@/hooks/useFetchQuery'
-import type {
-  CreateUserRequest,
-  CreateUserResponse
-} from '@/types/auth.api.types'
+import type { LoginRequest, LoginResponse } from '@/types/auth.api.types'
 import type { User } from '@/types/auth.context.types'
 import type {
   ApiError,
@@ -15,12 +12,12 @@ import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 export const useCreateUser = (
   fetchOptions?: FetchOptions,
   mutationOptions?: UseMutationOptions<
-    ApiResponse<BackendCustomResponse<CreateUserResponse>>,
+    ApiResponse<BackendCustomResponse<LoginResponse>>,
     ApiError,
-    CreateUserRequest
+    LoginRequest
   >
 ) => {
-  return useFetchMutation<CreateUserResponse, CreateUserRequest>(
+  return useFetchMutation<LoginResponse, LoginRequest>(
     '/users/login',
     null,
     fetchOptions,
