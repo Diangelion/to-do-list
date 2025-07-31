@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session
 from redis import Redis
 from app.models.user_model import ModelUser
-from app.schemas.user_schema import SchemaUserCreate
+from app.schemas.user_schema import SchemaUserCreate, SchemaUser
 from app.utils.jwt_utils import create_access_token, create_refresh_token
 from app.utils.redis_utils import store_refresh_token
 
-def service_get_or_create_user(oauth_user: SchemaUserCreate, db: Session) -> str:
+def service_get_or_create_user(oauth_user: SchemaUserCreate, db: Session) -> tuple[str, str]:
   user = db.query(ModelUser).filter(ModelUser.email == oauth_user.email).first()
   profile_picture = oauth_user.profile_picture or f'https://placehold.co/300?text={oauth_user.name.strip()[0]}'
+
   if not user:
     user = ModelUser(
       email=oauth_user.email,
@@ -17,7 +18,7 @@ def service_get_or_create_user(oauth_user: SchemaUserCreate, db: Session) -> str
     db.add(user)
     db.commit()
     db.refresh(user)
-    return str(user.id)
+    return str(user.id), str(user.email)
 
   updated_fields: dict[str, str] = {}
   if str(user.name) != oauth_user.name:
@@ -31,36 +32,29 @@ def service_get_or_create_user(oauth_user: SchemaUserCreate, db: Session) -> str
     db.commit()
     db.refresh(user)
 
-  return str(user.id)
+  return str(user.id), str(user.email)
 
 def service_login_user(
   oauth_user: SchemaUserCreate,
   db: Session,
   redis_client: Redis
 ) -> dict[str, str]:
-  user_id = service_get_or_create_user(oauth_user, db)
-  access_token = create_access_token(user_id)
-  refresh_token, lifetime = create_refresh_token(user_id)
+  user_id, user_email = service_get_or_create_user(oauth_user, db)
+
+  access_token = create_access_token(user_id, user_email)
+  refresh_token, lifetime = create_refresh_token(user_id, user_email)
+
   store_refresh_token(user_id, refresh_token, lifetime, redis_client)
-  return { 'access_token': access_token }
 
-# def service_verify_user(
-#   user_id: str,
-#   db: Session
-# ) -> SchemaUserCreate | None:
-
+  return { 'token': access_token }
 
 def service_get_profile(
   user_id: str,
   db: Session
-) -> SchemaUserCreate | None:
+) -> SchemaUser | None:
   user = db.query(ModelUser).filter(ModelUser.id == user_id).first()
 
   if not user:
     return None
 
-  return SchemaUserCreate(
-    name=str(user.name),
-    email=str(user.email),
-    profile_picture=str(user.profile_picture)
-  )
+  return SchemaUser.model_validate(user)

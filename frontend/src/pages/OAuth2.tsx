@@ -1,4 +1,5 @@
 import todoListConfig from '@/config/todo-list.config'
+import useAuth from '@/contexts/auth/useAuth'
 import useTheme from '@/contexts/theme/useTheme'
 import { useCreateUser } from '@/services/auth.service'
 import { tokenService } from '@/services/token.service'
@@ -9,6 +10,7 @@ import { TypeAnimation } from 'react-type-animation'
 
 const OAuth2 = () => {
   const { themeState } = useTheme()
+  const { setAuthState } = useAuth()
   const propagateLoaderColor =
     themeState.theme === 'light'
       ? todoListConfig.PROPAGATE_LOADER_COLOR_LIGHT
@@ -23,17 +25,13 @@ const OAuth2 = () => {
   const { mutate: createUserLogin } = useCreateUser(undefined, {
     onSuccess: async loginResponse => {
       if (loginResponse.status === 200) {
-        try {
-          await tokenService.set(loginResponse.data.data.token)
-          void navigate('/home')
-        } catch (error) {
-          console.error('createUserLogin | Failed to set token:', error)
-          void navigate('/')
-        }
+        const { token } = loginResponse.data.data
+        await tokenService.set(token)
+        setAuthState(prev => ({ ...prev, token }))
+        void navigate('/home')
       } else {
         void navigate('/')
       }
-      return void navigate('/')
     },
     onError: () => void navigate('/')
   })

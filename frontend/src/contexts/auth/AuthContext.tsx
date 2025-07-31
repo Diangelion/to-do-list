@@ -1,4 +1,8 @@
-import { useLogoutUser, useVerifyUser } from '@/services/auth.service'
+import {
+  useGetUser,
+  useLogoutUser,
+  useRefreshUser
+} from '@/services/auth.service'
 import { tokenService } from '@/services/token.service'
 // import { useGetUserProfile } from '@/services/user.service'
 import { useGoogleLogin } from '@react-oauth/google'
@@ -12,8 +16,6 @@ import { AuthContext, initialContextValue } from './auth.context'
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const { setGlobalState } = useGlobal()
-
-  const [accessToken, setAccessToken] = useState<string | null>(null)
   const [authState, setAuthState] = useState<AuthState>(
     initialContextValue.authState
   )
@@ -24,65 +26,66 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
     const loadToken = async () => {
       const token = await tokenService.get()
-      setAccessToken(token)
+      setAuthState(prev => ({ ...prev, token }))
     }
     void loadToken()
+
+    const registerForceLogout = async () => {
+      await tokenService.clear()
+      setAuthState({ token: null, authenticated: false })
+      setGlobalState(prev => ({ ...prev, user: null }))
+    }
+    tokenService.setForceLogout(registerForceLogout)
   }, [setGlobalState])
 
   // Verify token if available and not expired
-  const isTokenReady = accessToken !== null
-  const isTokenPresent = !!accessToken
-  const isTokenValid = accessToken ? !tokenService.expired(accessToken) : false
+  const isTokenReady = authState.token !== null
+  const isTokenPresent = !!authState.token
+  const isTokenValid = authState.token
+    ? !tokenService.expired(authState.token)
+    : false
 
   const shouldVerify = isTokenReady && isTokenPresent && isTokenValid
 
-  // Stop page loading if shouldVerify is false
-  useEffect(() => {
-    if (!shouldVerify) setGlobalState(prev => ({ ...prev, loading: false }))
-  }, [shouldVerify, setGlobalState])
-
   const {
     data: verifyData,
-    isSuccess: isVerifySuccess
-    // isLoading: isVerifying
-  } = useVerifyUser({ credentials: 'include' }, { enabled: shouldVerify })
+    isSuccess: isVerifySuccess,
+    isLoading: isVerifying
+  } = useRefreshUser({ credentials: 'include' }, { enabled: shouldVerify })
 
-  // // Fetch user profile only if verification passed
-  // const {
-  //   data: userProfile,
-  //   isSuccess: isProfileSuccess,
-  //   isLoading: isFetchingUser
-  // } = useGetUserProfile(isVerifySuccess)
+  // Fetch user profile only if verification passed
+  const {
+    data: profileData,
+    isSuccess: isProfileSuccess,
+    isLoading: isFetchingUser
+  } = useGetUser({ credentials: 'include' }, { enabled: isVerifySuccess })
 
   // Update auth state if verified
   useEffect(() => {
     if (isVerifySuccess && verifyData?.status === 200) {
-      setAuthState({ authenticated: true })
+      setAuthState(prev => ({ ...prev, authenticated: true }))
     }
   }, [isVerifySuccess, verifyData])
 
-  // // Store user profile and finish loading
-  // useEffect(() => {
-  //   const loadingDone =
-  //     (!isVerifying && !shouldVerify) || // no token or invalid
-  //     (isVerifySuccess && !isFetchingUser) // token valid → user fetched or errored
+  // Store user profile and handle finish loading
+  useEffect(() => {
+    const loadingDone =
+      (!isVerifying && !shouldVerify) || (isVerifySuccess && !isFetchingUser)
 
-  //   if (loadingDone) {
-  //     setGlobalState(prev => ({
-  //       ...prev,
-  //       isLoading: false,
-  //       user: isProfileSuccess && userProfile ? userProfile : null
-  //     }))
-  //   }
-  // }, [
-  //   isVerifying,
-  //   isFetchingUser,
-  //   isVerifySuccess,
-  //   isProfileSuccess,
-  //   userProfile,
-  //   setGlobalState,
-  //   shouldVerify
-  // ])
+    if (loadingDone) {
+      const user =
+        isProfileSuccess && profileData.data.data ? profileData.data.data : null
+      setGlobalState(prev => ({ ...prev, loading: false, user }))
+    }
+  }, [
+    isVerifying,
+    isFetchingUser,
+    isVerifySuccess,
+    isProfileSuccess,
+    setGlobalState,
+    shouldVerify,
+    profileData?.data.data
+  ])
 
   const googleLogin = useGoogleLogin({
     onError: err => console.error(`useGoogleLogin | ${err}`),
@@ -105,7 +108,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     try {
       await logoutUser(null)
       await tokenService.clear()
-      setAuthState({ authenticated: false })
+      setAuthState({ token: null, authenticated: false })
       setGlobalState(prev => ({ ...prev, user: null }))
     } catch (error) {
       console.error('logout | Logout failed:', error)

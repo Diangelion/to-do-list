@@ -10,6 +10,7 @@ export const tokenService: TokenService = {
   fetchOptions: { credentials: 'include' },
   pendingRefresh: null,
   storage: indexedDBStorage,
+  forceLogout: null,
 
   // Functions
   set: (token: string) =>
@@ -76,5 +77,8 @@ export const tokenService: TokenService = {
       sub: decoded.sub,
       email: decoded.email
     }
+  },
+  setForceLogout: (callback: () => void) => {
+    tokenService.forceLogout = callback
   }
 }

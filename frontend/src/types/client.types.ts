@@ -21,4 +21,5 @@ export interface FetchOptions extends Omit<RequestInit, 'signal' | 'headers'> {
   signal?: AbortSignal
   headers?: Record<string, string>
   timeout?: number
+  requiresAuth?: boolean
 }

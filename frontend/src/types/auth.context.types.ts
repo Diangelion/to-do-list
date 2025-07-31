@@ -8,6 +8,7 @@ export interface User {
 }
 
 export interface AuthState {
+  token: string | null
   authenticated: boolean
 }
 

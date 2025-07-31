@@ -15,14 +15,28 @@ const baseURL = import.meta.env.VITE_BASE_URL_API
 
 const apiRequest = async <T>(
   endpoint: string,
-  options: FetchOptions = {}
+  options: FetchOptions
 ): Promise<ApiResponse<BackendCustomResponse<T>>> => {
-  const { timeout = 10000, headers = {}, signal, ...fetchOptions } = options
+  const {
+    timeout = 10000,
+    headers = {},
+    signal,
+    requiresAuth = false,
+    ...fetchOptions
+  } = options
 
   const url = `${baseURL}${endpoint}`
   const timeoutSignal = createTimeoutSignal(timeout)
   const combinedSignal = combineSignals(signal, timeoutSignal)
+
   const accessToken = await tokenService.fresh()
+  if (!accessToken && requiresAuth) {
+    if (tokenService.forceLogout) {
+      tokenService.forceLogout
+    }
+    console.error('apiRequest | Access token missing or invalid')
+    throw new Error('apiRequest | Access token missing or invalid')
+  }
 
   const requestOptions: RequestInit = {
     ...fetchOptions,

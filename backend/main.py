@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 api_router = APIRouter(prefix=settings.api_prefix)
 
 # Routers
-api_router.include_router(user_api.router, prefix='/users', tags=['users'])
+api_router.include_router(user_api.router, prefix='/user', tags=['user'])
 api_router.include_router(todo_api.router, prefix='/todo', tags=['todo'])
 
 @asynccontextmanager
@@ -86,9 +86,12 @@ async def generic_exception_handler(request: Request, exc: Exception):
     f"Unhandled exception caught by generic_exception_handler: {type(exc).__name__} - {str(exc)}",
     exc_info=True
   )
+
   error_message = "An unexpected internal server error occurred. Please try again later."
+
   if app.debug:
-    error_message = f"Internal Server Error: {type(exc).__name__} - {str(exc)}"
+    error_message = f"Internal Server Error: {type(exc).__name__} - {str(exc)}."
+
   return json_response(status.HTTP_500_INTERNAL_SERVER_ERROR, False, error_message)
 
 def debug_cors_settings():

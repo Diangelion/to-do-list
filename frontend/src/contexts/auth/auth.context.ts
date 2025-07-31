@@ -3,6 +3,7 @@ import type { AuthContextValue } from '../../types/auth.context.types'
 
 export const initialContextValue: AuthContextValue = {
   authState: {
+    token: null,
     authenticated: false
   },
   setAuthState: () => {

@@ -34,7 +34,9 @@ async def jwt_middleware(
     return response
 
   except ExpiredSignatureError as e:
-    user_id = verify_token(access_token, options={"verify_exp": False}).user_id
+    token_data = verify_token(access_token, options={"verify_exp": False})
+    user_id = token_data.user_id
+    user_email = token_data.user_email
 
     try:
       refresh_token = get_refresh_token(user_id, redis_client)
@@ -50,7 +52,7 @@ async def jwt_middleware(
 
       new_access_token = create_access_token(user_id)
 
-      request.state.user = SchemaTokenData(user_id=user_id, token_type="access")
+      request.state.user = SchemaTokenData(user_id=user_id, user_email=user_email, token_type="access")
       response = await call_next(request)
       response.headers["Authorization"] = f"Bearer {new_access_token}"
       return response

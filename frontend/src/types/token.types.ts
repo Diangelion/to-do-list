@@ -6,6 +6,7 @@ export interface TokenService {
   fetchOptions: { credentials: RequestCredentials }
   pendingRefresh: Promise<string | null> | null
   storage: StorageService
+  forceLogout: (() => void | Promise<void>) | null
 
   // Methods
   set: (token: string) => Promise<boolean>
@@ -17,6 +18,7 @@ export interface TokenService {
   fresh: () => Promise<string | null>
   decode: (token: string) => DecodedAuthToken
   tokenInfo: (token: string) => Pick<DecodedAuthToken, 'sub' | 'email'> | null
+  setForceLogout: (callback: () => void | Promise<void>) => void
 }
 
 export interface DecodedAuthToken {

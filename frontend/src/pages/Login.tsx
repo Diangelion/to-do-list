@@ -29,7 +29,7 @@ const Login = () => {
           <h2>Sign in with</h2>
           <div className='mt-2 flex justify-center gap-x-2'>
             <Button
-              onClick={() => googleLogin}
+              onClick={() => googleLogin()}
               variant='secondary'
               className='hover-behaviour'
             >

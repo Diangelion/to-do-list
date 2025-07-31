@@ -18,22 +18,36 @@ export const useCreateUser = (
   >
 ) => {
   return useFetchMutation<LoginResponse, LoginRequest>(
-    '/users/login',
+    '/user/login',
     null,
     fetchOptions,
     mutationOptions
   )
 }
 
-export const useVerifyUser = (
+export const useRefreshUser = (
+  fetchOptions?: FetchOptions,
+  queryOptions?: Partial<
+    UseQueryOptions<ApiResponse<BackendCustomResponse<null>>, ApiError>
+  >
+) => {
+  return useFetchQuery<null>(
+    '/user/refresh',
+    ['refresh'],
+    fetchOptions,
+    queryOptions
+  )
+}
+
+export const useGetUser = (
   fetchOptions?: FetchOptions,
   queryOptions?: Partial<
     UseQueryOptions<ApiResponse<BackendCustomResponse<User>>, ApiError>
   >
 ) => {
   return useFetchQuery<User>(
-    '/users/verify',
-    ['users'],
+    '/user/profile',
+    ['user'],
     fetchOptions,
     queryOptions
   )
@@ -48,7 +62,7 @@ export const useLogoutUser = (
   >
 ) => {
   return useFetchMutation<null, null>(
-    '/users/logout',
+    '/user/logout',
     null,
     fetchOptions,
     mutationOptions
